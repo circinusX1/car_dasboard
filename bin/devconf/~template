@@ -1,0 +1,7 @@
+Category=XDevices
+Pname=firefox
+Xrect=1
+Name=$IP
+Icon=ethernet.png
+Exec=firefox $IP
+

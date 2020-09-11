@@ -1,0 +1,8 @@
+*.obj
+build*
+*.pro.user
+*.lib
+*.a
+*.m
+*.so
+

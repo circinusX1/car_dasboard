@@ -1,0 +1,7 @@
+Pname=controls
+Name=" "
+Exec=controls.sh
+Xrect=0
+Icon=control.png
+align=1
+Isize=@Size(120 72)

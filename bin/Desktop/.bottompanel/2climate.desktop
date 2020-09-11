@@ -1,0 +1,8 @@
+Pname=climate
+Name=" "
+Exec=climate.sh
+Xrect=0
+Icon=climate.png
+align=1
+Isize=@Size(120 72)
+

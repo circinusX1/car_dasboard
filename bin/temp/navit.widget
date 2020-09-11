@@ -1,0 +1,6 @@
+Pname=navit
+Xrect=1
+Xframe=0
+Icon=navit
+Exec=navit
+Noclose=1

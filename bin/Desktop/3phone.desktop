@@ -1,0 +1,8 @@
+Pname=vncviewer
+Name=" "
+Exec="vncviewer 192.168.1.103:5901"
+Xrect=0
+44OwnDesktop=1
+Icon=phone.png
+
+

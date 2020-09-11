@@ -1,0 +1,7 @@
+Pname=apps
+Name=XXXX
+Run=apps.sh
+Xrect=0
+Icon=apps.png
+
+

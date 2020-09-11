@@ -1,0 +1,4 @@
+Pname=blueman-manager
+Name=" "
+Icon=bluetooth-icon
+Exec=blueman-manager

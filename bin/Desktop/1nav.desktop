@@ -1,0 +1,7 @@
+Pname=navit
+Name=" "
+Exec=/home/linaro/navit/startnav.sh
+Xrect=0
+Icon=nav.png
+
+

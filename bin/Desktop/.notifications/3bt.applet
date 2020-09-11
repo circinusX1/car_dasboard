@@ -1,0 +1,4 @@
+Pname=blueman-manager
+Name=" "
+Icon=bbt.png
+Exec=blueman-manager

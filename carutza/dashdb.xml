@@ -1,0 +1,19 @@
+<node>
+  <interface name="com.zirexix.carowa">
+    <method name="notify">
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+      <arg name="name" type="s" direction="in" />
+      <arg name="customdata" type="a{sv}" direction="in" />
+    </method>
+    <method name="clicked"/>
+    <signal name="user_click">
+        <arg name="eventkind" type="s" direction="out"/>
+    </signal>
+ </interface>
+</node>
+<!--
+
+qdbusxml2cpp -v -c dashdbIf -p dashdb_proxy.h:dashdb_proxy.cpp dashdb.xml
+qdbusxml2cpp -c dashdbIfAdaptor -a dashdb_iface.h:dashdb_iface.cpp dashdb.xml
+
+-->

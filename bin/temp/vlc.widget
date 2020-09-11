@@ -1,0 +1,6 @@
+Pname=vlc
+Xrect=2
+Xframe=0
+Icon=vlc
+Exec=vlc
+

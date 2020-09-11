@@ -1,0 +1,7 @@
+Pname=firefox
+Name=" "
+Exec="firefox http://www.twitter.com/"
+Xrect=0
+Icon=twitter
+
+

@@ -1,0 +1,7 @@
+Pname=streamtuner
+XRect=2
+Name=Web-Radio
+Exec=streamtuner
+Icon=radio
+Noclose=1
+

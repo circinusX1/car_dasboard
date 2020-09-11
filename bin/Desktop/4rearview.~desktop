@@ -1,0 +1,6 @@
+Pname=mplayer
+Name=" "
+Icon=rearview.png
+Xrect=0
+Exec="@.network/00:1A:70:9D:FE:7F.desktop"
+
