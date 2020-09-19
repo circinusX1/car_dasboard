@@ -1,0 +1,6 @@
+Pname=firefox
+XRect=2
+Exec="firefox http://$IP" 
+Icon=firefox
+Xframe=0
+CatIcon=ethernet.png

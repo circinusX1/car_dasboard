@@ -37,7 +37,7 @@ Appman::Appman(Panel *p, const QSize& size, const XwnSet& set, QWidget *parent)
 {
     PA->set_appman(this);
     setFixedSize(size);
-    set_image(CFG(_images),_set._icon);
+    set_image(CFG(_images),set._icon);
 }
 
 /*-----------------------------------------------------------------------------

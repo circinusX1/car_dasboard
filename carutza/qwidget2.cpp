@@ -43,8 +43,9 @@ QWidget2::QWidget2(CfgPanel* pconfpan, QWidget *parent)
 
     if(pconfpan && !pconfpan->_bgimage.isEmpty())
     {
-
-        if(pconfpan->_bgimage[0]<'9') // is rgb
+        QFileInfo fileInfo(pconfpan->_bgimage);
+        QString filename(fileInfo.fileName());
+        if(filename.at(0)<'9') // is rgb
         {
             _q_pixmap = new Imagez(4,4,0);
             _q_pixmap->fromrgb(pconfpan->_bgimage.toInt());

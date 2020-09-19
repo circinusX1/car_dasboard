@@ -1,0 +1,8 @@
+Pname=mplayer
+Name=" "
+Icon=rearview
+Xrect=1
+Name=rearview-cam
+Exec="mplayer -vf scale=512:768 http://$IP/img/video.asf"
+Category=Apps
+

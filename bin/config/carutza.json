@@ -1,0 +1,20 @@
+x{
+    rect={0, 0, $MAX, $MAX}
+    size{44}
+
+    panel{
+        length{@../size}
+        rect{@../rect[0],@../rect[1],@../rect[2],@x/rect[3]}
+    }
+    values{
+        {
+            2,3,5
+        }
+        {
+            5,6,7
+        }
+    }
+
+}
+
+

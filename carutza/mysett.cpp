@@ -36,8 +36,11 @@ Project:    CARUTZA
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
 MySett::MySett(const QString &fileName, Format format, int global):
-        QSettings(fileName, format),_home(getenv("HOME")),_killdelay(100)
+        QSettings(fileName, format),_killdelay(100)
 {
+    char pw[256]; ::getcwd(pw, 255);
+    _workdir = pw;
+    _setdir = _workdir+"/config/";
     _base=this->value("dashboard").toString();
     _fontpercent=this->value("font_percent").toInt();
     _killdelay=this->value("kill_delay").toInt();
@@ -52,7 +55,7 @@ MySett::MySett(const QString &fileName, Format format, int global):
     //up to 8 panels
     for(int k=0;k<8;++k)
     {
-        CfgPanel   pset;
+        CfgPanel    pset;
         QString     pe("panel");
         pe += QString::number(k);
 
@@ -65,12 +68,25 @@ MySett::MySett(const QString &fileName, Format format, int global):
                 pset._height  = this->value("height").toInt();
                 pset._position = this->value("position").toSize();
                 pset._align   = this->value("align").toInt();
-                pset._dir     = _desk+this->value("basedir").toString();
+
                 pset._notify  = this->value("notify").toBool();
                 pset._width   = this->value("width").toInt();
                 pset._arrange = this->value("arrange").toInt();
                 pset._spacing = this->value("spacing").toInt();
                 pset._bgimage = this->value("bgimage").toString();
+                pset._dir     = this->value("config").toString();
+                if(!pset._bgimage.isEmpty())
+                {
+                    if(pset._bgimage[0]=='/')
+                    {
+                        //absolute path
+                        QString img = pset._bgimage;
+                        pset._bgimage = _workdir + pset._bgimage;
+                    }
+                }
+                pset._dir     += "/";
+                pset._dir     += this->value("basedir").toString();
+                pset._dir     += "/";
                 _panels[pe]   = pset;
             }
         this->endGroup();
@@ -110,6 +126,21 @@ MySett::MySett(const QString &fileName, Format format, int global):
                 pset._spacing= this->value("spacing").toInt();
                 pset._width= this->value("width").toInt();
                 pset._bgimage = this->value("bgimage").toString();
+
+                pset._dir     = this->value("config").toString();
+                if(!pset._bgimage.isEmpty())
+                {
+                    if(pset._bgimage[0]=='/')
+                    {
+                        //absolute path
+                        QString img = pset._bgimage;
+                        pset._bgimage = _workdir + pset._bgimage;
+                    }
+                }
+                pset._dir     += "/";
+                pset._dir     += this->value("basedir").toString();
+                pset._dir     += "/";
+
                 //up to 8 children
                 for(int c=0;c<8;++c)
                 {
@@ -157,6 +188,8 @@ MySett::MySett(const QString &fileName, Format format, int global):
     if(value("caption_height").toInt()==0)
         this->setValue("caption_height",18);
     _displays = this->value("displays").toInt();
+
+    _display = this->value("display").toInt();
 }
 
 /*--------------------------------------------------------------------------------------
@@ -220,9 +253,9 @@ const QString&  MySett::theme_path()
   -------------------------------------------------------------------------------------*/
 void MySett::mangle(QString& s)
 {
-    if(s.contains("$HOME"))
+    if(s.contains("$PWD"))
     {
-        s.replace("$HOME", _home);
+        s.replace("$PWD", _workdir);
     }
 
     else if(s.contains("$THEME"))

@@ -98,6 +98,7 @@ protected:
     int             _selected;
     bool            _hidden;
     bool            _folderchanged;
+    QSize           _pos;
 };
 
 

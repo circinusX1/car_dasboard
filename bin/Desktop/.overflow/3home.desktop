@@ -1,9 +1,0 @@
-Pname=op_pview
-Name=" "
-Exec=show_home_png
-Isize=@Size(92 92)
-Icon=home.png
-align=2
-Xrect=0
-
-

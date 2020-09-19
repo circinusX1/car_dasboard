@@ -1,0 +1,10 @@
+Pname=@welcome_applet
+Name="Dashboard"
+Isize=@Size(346 30)
+bckcolor=1
+fontcolor=65535
+align=1
+ialign=1
+talign=129
+ 
+

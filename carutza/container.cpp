@@ -56,9 +56,10 @@ void Container::_config_ui()
 {
     if(_pconfpan->_height>0)
     {
-        // _background.load_image("", _pconfpan->_bgimage);
+        //_background.load_image("", _pconfpan->_bgimage);
 
         if(_pconfpan->_width<=0)_pconfpan->_width=CFG(_drect.width());
+
         this->move(_pconfpan->_position.width(), _pconfpan->_position.height());
         this->setFixedSize(_pconfpan->_width, _pconfpan->_height);
 
@@ -70,6 +71,7 @@ void Container::_config_ui()
             _layout->setDirection(QBoxLayout::RightToLeft);
 
         _layout->setContentsMargins(0, 0, 0, 0);
+        //_layout-SetSize(0,0);
         _load_controls(QString());
         this->setLayout(_layout);
         this->show();
@@ -81,7 +83,6 @@ void Container::_config_ui()
 void Container::_load_controls(const QString& folder)
 {
     Q_UNUSED(folder);
-
     // calc widths
     int                                  allwidth = 0, allpans=0;
     std::vector<XwnSet>                  ctrls;
@@ -92,7 +93,7 @@ void Container::_load_controls(const QString& folder)
         const QString& whada = *it;
         if(whada.at(0)!='@')
         {
-            QString filen = CFG(_desk)+whada;
+            QString filen = CFG(_setdir)+whada;
             QSettings df(filen, QSettings::NativeFormat, 0);
             XwnSet butset;
             if(butset.Load(df))
@@ -141,20 +142,16 @@ void Container::_load_controls(const QString& folder)
                  fixed->show();
                  fixed->setBackgroundColor(QColor(0,0,0));
                  _layout->addWidget(fixed, 0, Qt::AlignLeft);
+
                  _butons.push_back(fixed);
              }
         }
         else
         {
-            char cwd[256];
-            ::getcwd(cwd,255);
-
-            QString env = getenv("HOME");env+="/";
-            QString file=env; file.append(".carutza/Desktop/icons_bandw/");
-
+            QString env = "icons_bandw/";
 
             LunchButt* pb = new LunchButt(this, bset._icwh, bset);
-            pb->set_image(file,bset._icon);
+            pb->set_image(env,bset._icon);
             if(!bset._caticon.isEmpty())  pb->set_cat_image("",bset._caticon);
             _layout->addWidget(pb, 0,(Qt::AlignmentFlag)bset._align);
             _butons.push_back(pb);

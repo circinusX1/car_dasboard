@@ -1,0 +1,51 @@
+desktop : {
+    AlignLeft  :  1
+    AlignLeading  :  1
+    AlignRight  :  2
+    AlignTrailing  :  1
+    AlignHCenter  :  4
+    AlignJustify  :  8
+    AlignAbsolute  : 12
+    zroder 0
+    displays1 : 2;
+    display : 1;
+    dashboard : $PWD
+    rect : 0,900,768,100
+    backfollow : 1
+    theme  : default
+    start :  $PWD/navit/startnav.sh, "$PWD/op_clock_applet &"
+    start  : xfce4-panel
+    main_menu : 0
+    dock_pix : dockbar.png
+    d_icon_pix : dockicon.png
+    dock_factor : 1
+    dock_autohide : 0
+    font_percent : 10
+    forceimages : 1
+    force_repaint : 1
+    caption_height : 18
+    desktop_show : 0
+    kill_delay : 256
+
+    panels [
+        notifications  {
+            geometry = 0,0,$MAX,32,
+            applets : [
+                wifi  {
+                    icon: wifi.png,
+                    pname: wifi,
+                    align: right,
+                },
+                clock  {
+                    icon: clock.png,
+                    pname: clock,
+                    align: right,
+                }
+            ]
+        }
+        launcher
+        desktop
+        permanent
+    ]
+
+}

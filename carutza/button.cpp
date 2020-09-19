@@ -111,6 +111,9 @@ bool OdButton::set_image(const char* path, const char* imagefile)
     int     states[] = {QIcon::Active, QIcon::Disabled, QIcon::Selected};
     bool    textonly = false;
 
+    if(*imagefile==0)
+        return false;
+
     if(!ipixa.load_image(path,imagefile))
     {
         QPixmap pixmap(_initsz.width()-2,_initsz.height()-2);

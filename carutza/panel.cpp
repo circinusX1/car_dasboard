@@ -69,16 +69,22 @@ void Panel::_config_ui()
     {
         _basefolder = _pconfpan->_dir;
         _curfolder = _basefolder;
-        this->move(_pconfpan->_position.width(), _pconfpan->_position.height());
+        int ypos = _pconfpan->_position.height();
+        this->move(_pconfpan->_position.width(), ypos);
+        _pos.setWidth(_pconfpan->_position.width());
+        _pos.setHeight(ypos);
+
         _layout = new QHBoxLayout();
         _layout->setSpacing(_pconfpan->_spacing);
         if(_pconfpan->_align==1)
             _layout->setDirection(QBoxLayout::LeftToRight);
         else if(_pconfpan->_align==2)
             _layout->setDirection(QBoxLayout::RightToLeft);
+        _layout->setSizeConstraint(QBoxLayout::SetMaximumSize);
         _layout->setContentsMargins(0, 0, 0, 0);
         _load_controls(_basefolder);
         this->setLayout(_layout);
+        this->move(_pos.width(),_pos.height());
         this->show();
     }
 }
@@ -172,7 +178,6 @@ void Panel::fit_to_parent(const QSize& proom)
 void Panel::_load_controls(const QString& folder)
 {
     QSize               sz = _pconfpan->_icons;
-    QSettings           dfx(folder+"desktop.conf", QSettings::NativeFormat, 0);
     std::vector<XwnSet> buts;
     int                 swidth=_parent_width();
 
@@ -188,7 +193,8 @@ void Panel::_load_controls(const QString& folder)
     //cond_if(_layerwidth <= swidth, _layerwidth = swidth);
     this->setFixedWidth(_layerwidth);
     this->resize(_layerwidth, _pconfpan->_height);
-    this->move(_pconfpan->_position.width(),_pconfpan->_position.height());
+    int ypos = _pconfpan->_position.height();
+    this->move(_pconfpan->_position.width(),ypos);
 
     if(folder != _basefolder)
     {
@@ -538,6 +544,7 @@ void   Panel::refresh_buts()
         if(pb)
             pb->refresh();
     }
+    this->move(_pos.width(),_pos.height());
 }
 
 /*--------------------------------------------------------------------------------------

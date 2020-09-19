@@ -47,6 +47,7 @@ SOURCES += main.cpp\
     dashdb_iface.cpp
 
 HEADERS  += \
+    akajson.h \
     desktop.h \
     defs.h \
     menu.h \
@@ -126,6 +127,36 @@ OTHER_FILES += \
     ../bin/Desktop/.overflow/2right.control~ \
     ../bin/Desktop/.overflow/home.control~ \
     ../bin/Desktop/.overflow/1left.control
+
+DISTFILES += \
+    ../bin/config/bottompanel/1x.signal \
+    ../bin/config/bottompanel/2climate.desktop \
+    ../bin/config/bottompanel/3controls.desktop \
+    ../bin/config/bottompanel/4volume.desktop \
+    ../bin/config/carutza.json \
+    ../bin/config/notifications/1clock.applet \
+    ../bin/config/notifications/2weather.applet \
+    ../bin/config/notifications/3bt.applet \
+    ../bin/config/notifications/3wifi.applet \
+    ../bin/config/notifications/4signal.applet \
+    ../bin/config/notifications/5target.applet \
+    ../bin/config/notifications/6user.applet \
+    ../bin/config/op_ethd.conf \
+    ../bin/config/overflow/1left.control \
+    ../bin/config/overflow/2right.control \
+    ../bin/config/overflow/3home.desktop \
+    ../bin/config/overflow/camera.desktopp \
+    ../bin/config/overflow/desktop.conf \
+    ../bin/config/overflow/face.-desktopp \
+    ../bin/config/overflow/facebook.-desktopp \
+    ../bin/config/overflow/linedin.desktopp \
+    ../bin/config/overflow/music.desktop \
+    ../bin/config/overflow/pandora.desktopp \
+    ../bin/config/overflow/pandora.~desktop \
+    ../bin/config/overflow/pin.desktopp \
+    ../bin/config/overflow/rssnews.desktopp \
+    ../bin/config/overflow/twiter .~desktopp \
+    ../bin/config/overflow/xm.desktop
 
 
 

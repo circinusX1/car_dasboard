@@ -63,6 +63,8 @@ bool Imagez::load_image(const char* path,
     MySett& config = MySett::config();
     QString fp;
 
+    qDebug() << "LOADING: " << cimage << "\n";
+
     if(!strstr(cimage,".png"))
     {
          image+=".png";
@@ -75,25 +77,22 @@ bool Imagez::load_image(const char* path,
     {
         return QPixmap::load(fp, format, flags);
     }
-    else {
-        std::cout << "cannot load: " << fp.toStdString() << "\n";
-    }
 
     fp = config.images()+image;
     if(0==::access(fp.toUtf8(),0))
     {
         return QPixmap::load(fp, format, flags);
-    }else {
-        std::cout << "cannot load: " << fp.toStdString() << "\n";
     }
+
     fp = "/usr/share/app-install/icons/"; fp += image;
     if(0==::access(fp.toUtf8(),0))
     {
         bool br = QPixmap::load(fp, format, flags);
         return br;
-    }else {
-        std::cout << "cannot load: " << fp.toStdString() << "\n";
     }
+
+    std::cout << "cannot load: " << image.toStdString() << "\n";
+
     if(force)
     {
         fp = config.images()+"noimage.png";
@@ -101,7 +100,8 @@ bool Imagez::load_image(const char* path,
         {
             bool br = QPixmap::load(fp, format, flags);
             return br;
-        }else {
+        }else
+        {
             std::cout << "cannot load: " << fp.toStdString() << "\n";
         }
     }

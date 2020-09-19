@@ -26,9 +26,15 @@ Credits     antico
 #include "defs.h"
 #include "theapp.h"
 #include "mysett.h"
+#include "akajson.h"
 
 extern TheApp *_PA;
 bool __initialized = false;
+
+void customHandler(QtMsgType type, const char* msg) {
+    fprintf(stderr, msg);
+    fflush(stderr);
+}
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
@@ -37,15 +43,28 @@ int main(int argc, char **argv)
   //  systyem("export DISPLAY=:0.1");
     TheApp a(argc, argv);
 
+    qInstallMsgHandler(customHandler);
+
+
     // test if we have settings file
-    QString env = getenv("HOME");env+="/";
-    QString file=env; file.append(".carutza/config/carutza.conf");
+    char cwd[256]; ::getcwd(cwd,255);
+    QString env = cwd; env+="/";
+    QString file=env;
+    file.append("config/carutza.conf");
+
+    QString filej=env;
+    filej.append("config/carutza.json");
+
+
+    AkaJson aj(filej);
+
+    return 0;
 
     if(0!=::access(file.toUtf8(),0))
     {
         QString s("The folder: ");
         s.append(env);
-        s.append("~/.carutza/config/carutza.conf does not exist. \n Program exits");
+        s.append("does not exist. \n Program exits");
         QMessageBox msgBox;
         msgBox.setText(s);
         msgBox.exec();

@@ -1,8 +1,0 @@
-Pname=firefox
-Name=" "
-Exec="firefox http://www.pin.com/"
-Xrect=0
-Icon=pin
-
-
-

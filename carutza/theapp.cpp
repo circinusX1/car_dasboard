@@ -460,7 +460,7 @@ void TheApp::runapp(const XwnSet& xset)
 //-----------------------------------------------------------------------------
 void TheApp::slot_run_app()
 {
-    cond_if(_pset_torun==0,return);
+    cond_if(_pset_torun==nullptr,return);
     cond_if(_is_running(*_pset_torun), return);
 /*
     QString binname = _pset_torun->_cmd;
@@ -479,10 +479,23 @@ void TheApp::slot_run_app()
     if(!exist.isEmpty())
     {
 */
+
+        char cd[512];
+        ::getcwd(cd,511);
+
         setOverrideCursor(Qt::WaitCursor);
         QTimer::singleShot(4096, this, SLOT(slot_normal_cursor()));
 
-        QString cmd = _pset_torun->_cmd;
+        QString cmd = "export DISPLAY=:";
+        int d = CFG(_display);
+        cmd += QString::number(d);
+        cmd += " && ";
+
+        std::string loco = "./"; loco += _pset_torun->_cmd.toStdString();
+        if(::access(loco.c_str(),0)==0)
+            cmd += "./";
+
+        cmd += _pset_torun->_cmd;
         cond_if(!cmd.endsWith("&"),cmd += " &");
         qDebug() << "start: " << cmd;
         system(cmd.toUtf8());

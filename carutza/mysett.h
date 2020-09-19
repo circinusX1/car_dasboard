@@ -77,16 +77,16 @@ public:
     {
         QString value = this->value(key).toString();
 
-        if(value.contains("$HOME"))
+        if(value.contains("$PWD"))
         {
-            value.replace("$HOME", _home);
+            value.replace("$PWD", _workdir);
         }
         return value;
     }
     void  load_panels(std::vector<Panel*>& panels);
     void  load_containers(std::vector<Container*>& containers);
     const QString& base()const{return _base;}
-    const QString& home()const{return _home;}
+    const QString& home()const{return _workdir;}
     const QString& desktop()const{return  _desk;}
     const QString& images()const{return _images;}
     const QRect& drect()const{return _drect;}
@@ -105,13 +105,15 @@ private:
     int     _parse_value(const QString value, QRect& _get_screen);
 
 public:
-    QString _home;
+    QString _workdir;
+    QString _setdir;
     QString _base;
     QString _desk;
     QString _images;
     QString _theme;
     QString _wallpaper;
     int     _displays;
+    int     _display;
     QRect   _drect;
     int     _fontpercent;
     int     _killdelay;
