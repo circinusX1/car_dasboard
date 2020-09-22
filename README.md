@@ -17,6 +17,7 @@ Linux Desktop and WIndow Manager For a Card Dashboard written in QT.
    sudo apt-get update && sudo apt-get install libtool libx11-dev xinput autoconf libx11-dev libxi-dev x11proto-input-dev xorg -y
    sudo apt-get install x11-xserver-utils xinit
    sudo apt-get install -y qt4-dev-tools
+   sudo apt-get install rtl-sdr
    cd carutza
    make clean
    rm moc_*
@@ -33,7 +34,20 @@ On a PC where already there is a desktop runnning
 ```
    cd car_dasboard
    ./start<tab> CR   start xephir
-   cd ./bin
    ./carutza -display :1
 
 ```
+
+### For RTL radio
+
+```
+sudo apt-get install git build-essential cmake qt5-default qtscript5-dev libssl-dev qttools5-dev qttools5-dev-tools qtmultimedia5-dev libqt5svg5-dev libqt5webkit5-dev libsdl2-dev libasound2 libxmu-dev libxi-dev freeglut3-dev libasound2-dev libjack-jackd2-dev libxrandr-dev libqt5xmlpatterns5-dev libqt5xmlpatterns5
+git clone https://github.com/csete/gqrx.git
+sudo apt-get  install gnuradio
+
+cd gqrx
+cmake . && make 
+
+```
+
+
