@@ -14,5 +14,6 @@ Linux Desktop and WIndow Manager For a Card Dashboard written in QT.
    * Have a non UI image installed. Like: Raspbian GNU/Linux 8 \n \l
    * sudo apt-get update && sudo apt-get install -y qt4-dev-tools
    * Have at least 1 G free
-   * 
+   * sudo apt-get install libtool libx11-dev xinput autoconf libx11-dev libxi-dev x11proto-input-dev -y
+   
    
