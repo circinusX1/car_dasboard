@@ -20,8 +20,10 @@ Linux Desktop and WIndow Manager For a Card Dashboard written in QT.
    
    ```
    
-   xset s off      # don't activate screensaver
-   xset -dpms      # disable DPMS (Energy Star) feature
+setterm -blank 0
+xset -dpms
+xset s noblank
+xset s off
 
 ```
 
