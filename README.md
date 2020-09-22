@@ -13,6 +13,8 @@ Linux Desktop and WIndow Manager For a Card Dashboard written in QT.
    
    * Have a non UI image installed. Like: Raspbian GNU/Linux 8 \n \l
 
+   ## carutza (qt4)
+   
 ```   
    sudo apt-get update && sudo apt-get install libtool libx11-dev xinput autoconf libx11-dev libxi-dev x11proto-input-dev xorg -y
    sudo apt-get install x11-xserver-utils xinit
@@ -38,7 +40,7 @@ On a PC where already there is a desktop runnning
 
 ```
 
-### For RTL radio
+#### For RTL radio  (qt5)
 
 ```
 sudo apt-get install git build-essential cmake qt5-default qtscript5-dev libssl-dev qttools5-dev qttools5-dev-tools qtmultimedia5-dev libqt5svg5-dev libqt5webkit5-dev libsdl2-dev libasound2 libxmu-dev libxi-dev freeglut3-dev libasound2-dev libjack-jackd2-dev libxrandr-dev libqt5xmlpatterns5-dev libqt5xmlpatterns5
@@ -46,8 +48,44 @@ git clone https://github.com/csete/gqrx.git
 sudo apt-get  install gnuradio
 
 cd gqrx
+sudo apt-get install -y qt5-qmake
+qtchooser -l
 cmake . && make 
 
 ```
+
+#### Navigaton
+
+
+
+
+#### Bluetooth
+
+
+
+
+#### Camera's
+
+
+
+#### For MEdia player
+
+
+
+
+#### For ODBC
+
+
+
+#### For temperature / Humidity
+
+
+
+### For acceleration, orientation compass
+
+
+
+
+
 
 
