@@ -48,34 +48,35 @@ sudo apt-get  install gnuradio
 
 #### Navigaton
 
+ * using navit
 
 
 
 #### Bluetooth
 
 
-
+  * WIP
 
 #### Camera's
 
+  * ESP32 cam & ethernet cam
+
+#### For Media player
+
+  * mplayer
 
 
-#### For MEdia player
+#### For OBD2
 
-
-
-
-#### For ODBC
-
-
+   * pyobd
 
 #### For temperature / Humidity
 
-
+   * builtin
 
 ### For acceleration, orientation compass
 
-
+  * builtin
 
 
 
