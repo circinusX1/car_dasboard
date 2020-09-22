@@ -47,7 +47,6 @@ SOURCES += main.cpp\
     dashdb_iface.cpp
 
 HEADERS  += \
-    akajson.h \
     desktop.h \
     defs.h \
     menu.h \
@@ -133,7 +132,6 @@ DISTFILES += \
     ../bin/config/bottompanel/2climate.desktop \
     ../bin/config/bottompanel/3controls.desktop \
     ../bin/config/bottompanel/4volume.desktop \
-    ../bin/config/carutza.json \
     ../bin/config/notifications/1clock.applet \
     ../bin/config/notifications/2weather.applet \
     ../bin/config/notifications/3bt.applet \

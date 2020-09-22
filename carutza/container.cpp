@@ -118,6 +118,8 @@ void Container::_load_controls(const QString& folder)
             butset._wt = XwnSet::WIG_CONTAINER;
             ctrls.push_back(butset);
             ++allpans;
+
+            allwidth += butset._icwh.width() + _pconfpan->_spacing;
         }
     }
 

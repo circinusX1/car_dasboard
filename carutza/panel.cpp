@@ -423,7 +423,7 @@ void Panel::_done_scrooling(int dr)
         {
             xe = 0;
         }
-        else if(xs < -maxleft)
+        else if(xs < maxleft)
         {
             xe=-maxleft;
         }
@@ -433,14 +433,17 @@ void Panel::_done_scrooling(int dr)
             xe  = (xs / _icwidth) - mox;
             xe *= _icwidth;
         }
-
+/*
         _panimation->setDuration(300);
         _panimation->setStartValue(QRect(xs,this->pos().y(),
                                          this->rect().width(),this->rect().height()));
+
         _panimation->setEndValue(QRect(xe,this->pos().y(),
                                        this->rect().width(),this->rect().height()));
         _panimation->setEasingCurve(QEasingCurve::OutCubic);
         _panimation->start();
+*/
+
      }
 }
 

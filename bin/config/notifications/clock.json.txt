@@ -1,0 +1,24 @@
+{
+
+    pname{<}
+    Name{" "}
+    isize{32,92}
+    icon{left.png}
+    align{1}
+    nopush{true}
+    state{4}
+},
+{
+    pname{cheese}
+    Name{" "}
+    Exec{cheese}
+    Xrect{0}
+    icon{camera}
+},
+{
+    pname{rssnews}
+    Name{" "}
+    Exec{rssnews}
+    Xrect{0}
+    icon{rss}
+}

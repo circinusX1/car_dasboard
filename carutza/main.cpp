@@ -26,8 +26,6 @@ Credits     antico
 #include "defs.h"
 #include "theapp.h"
 #include "mysett.h"
-#include "akajson.h"
-
 extern TheApp *_PA;
 bool __initialized = false;
 
@@ -51,14 +49,6 @@ int main(int argc, char **argv)
     QString env = cwd; env+="/";
     QString file=env;
     file.append("config/carutza.conf");
-
-    QString filej=env;
-    filej.append("config/carutza.json");
-
-
-    AkaJson aj(filej);
-
-    return 0;
 
     if(0!=::access(file.toUtf8(),0))
     {
