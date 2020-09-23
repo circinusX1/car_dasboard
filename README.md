@@ -34,6 +34,10 @@ allowed_users=anybody # make this change
    rm moc_*
    qmake .
    make
+xset s off
+xset -dpms  
+xset s noblank
+
    cp ./caruthza ../bin
    # for arm R-PI etc...
    cd ../bin
