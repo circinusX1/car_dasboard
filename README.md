@@ -20,6 +20,15 @@ Linux Desktop and WIndow Manager For a Card Dashboard written in QT.
    sudo apt-get install x11-xserver-utils xinit
    sudo apt-get install -y qt4-dev-tools
    sudo apt-get install rtl-sdr
+   
+##########################################   
+   sudo nano /etc/X11/Xwrapper.config
+   
+#   dpkg-reconfigure xserver-xorg-legacy
+allowed_users=anybody # make this change
+
+##########################################
+   
    cd carutza
    make clean
    rm moc_*
