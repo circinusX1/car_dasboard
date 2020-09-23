@@ -49,6 +49,27 @@ sudo apt-get  install gnuradio
 #### Navigaton
 
  * using navit
+ 
+NEO-6M GPS WITH R-PI: follow: http://comarius.blogspot.com/2020/09/neo-6m-gps-with-raspberry-pi.html
+
+
+
+```
+
+sudo apt-get install gpsd
+stty -F /dev/serial1 9600
+ 
+sudo nano /etc/default/gpsd
+# add this content
+START_DAEMON="true"
+USBAUTO="true"
+DEVICES="/dev/serial0"
+GPSD_OPTIONS=""
+GPSD_SOCKET="/var/run/gpsd.sock"
+
+ 
+ 
+ ```
 
 
 
