@@ -30,20 +30,20 @@ static const uint qt_meta_data_OdButton[] = {
        3,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
-      13,   10,    9,    9, 0x05,
-      43,    9,    9,    9, 0x05,
-      66,    9,    9,    9, 0x05,
+       9,   39,   42,   42, 0x05,
+      43,   42,   42,   42, 0x05,
+      66,   42,   42,   42, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      84,    9,    9,    9, 0x0a,
-     101,    9,    9,    9, 0x0a,
+      84,   42,   42,   42, 0x0a,
+     101,   42,   42,   42, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_OdButton[] = {
-    "OdButton\0\0,,\0sig_moving(OdButton*,int,int)\0"
-    "sig_clicked(OdButton*)\0sig_scrolled(int)\0"
+    "OdButton\0sig_moving(OdButton*,int,int)\0"
+    ",,\0\0sig_clicked(OdButton*)\0sig_scrolled(int)\0"
     "slot_show_menu()\0slot_paint_again()\0"
 };
 

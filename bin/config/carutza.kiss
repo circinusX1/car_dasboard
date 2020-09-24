@@ -1,5 +1,5 @@
 {
-    display{1}
+    display{0}
     zorder{0}
     displays{2}
     dashboard{$PWD/}

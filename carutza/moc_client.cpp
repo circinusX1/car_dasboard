@@ -30,28 +30,28 @@ static const uint qt_meta_data_XClient[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-       9,    8,    8,    8, 0x0a,
-      25,    8,    8,    8, 0x0a,
-      45,    8,    8,    8, 0x0a,
-      61,    8,    8,    8, 0x0a,
-      76,    8,    8,    8, 0x0a,
-      91,    8,    8,    8, 0x0a,
-     104,    8,    8,    8, 0x0a,
-     130,    8,    8,    8, 0x0a,
-     150,    8,    8,    8, 0x0a,
-     183,    8,    8,    8, 0x0a,
-     215,    8,    8,    8, 0x0a,
-     247,    8,    8,    8, 0x0a,
-     278,    8,    8,    8, 0x0a,
-     300,    8,    8,    8, 0x0a,
-     316,    8,    8,    8, 0x0a,
-     328,    8,    8,    8, 0x0a,
+       8,   24,   24,   24, 0x0a,
+      25,   24,   24,   24, 0x0a,
+      45,   24,   24,   24, 0x0a,
+      61,   24,   24,   24, 0x0a,
+      76,   24,   24,   24, 0x0a,
+      91,   24,   24,   24, 0x0a,
+     104,   24,   24,   24, 0x0a,
+     130,   24,   24,   24, 0x0a,
+     150,   24,   24,   24, 0x0a,
+     183,   24,   24,   24, 0x0a,
+     215,   24,   24,   24, 0x0a,
+     247,   24,   24,   24, 0x0a,
+     278,   24,   24,   24, 0x0a,
+     300,   24,   24,   24, 0x0a,
+     316,   24,   24,   24, 0x0a,
+     328,   24,   24,   24, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_XClient[] = {
-    "XClient\0\0slot_minimize()\0slot_minimize_now()\0"
+    "XClient\0slot_minimize()\0\0slot_minimize_now()\0"
     "slot_maximize()\0slot_map_win()\0"
     "slot_map_now()\0slot_unmap()\0"
     "slot_remove_dock_widget()\0slot_destroy_xcli()\0"

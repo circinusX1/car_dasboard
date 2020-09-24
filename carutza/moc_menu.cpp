@@ -30,13 +30,13 @@ static const uint qt_meta_data_DskMenu[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-       9,    8,    8,    8, 0x0a,
+       8,   18,   18,   18, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_DskMenu[] = {
-    "DskMenu\0\0run_cmd()\0"
+    "DskMenu\0run_cmd()\0\0"
 };
 
 void DskMenu::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
