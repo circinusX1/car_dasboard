@@ -1,9 +1,9 @@
 # car_dasboard
-Linux Desktop and WIndow Manager For a Card Dashboard written in QT.
 
-... under recovery.. This is a 7 years old project just ran into. I am making it runable on latest QT. Does not run properly yet.
 
-   * If you run it start the start-xephir.sh and run the appon display 1, otherwis would iterfere with curent desktop.
+This is a 7 years old project just ran into. Work in progress...
+
+   * If you run it start the start-xephir.sh and run the app on display 1, otherwise would iterfere with curent desktop.
    
    
    carutza -display ":1"
@@ -79,12 +79,13 @@ USBAUTO="true"
 DEVICES="/dev/serial0"
 GPSD_OPTIONS=""
 GPSD_SOCKET="/var/run/gpsd.sock"
-
- 
  
  ```
 
 
+### Configure desktops and panels
+
+todo
 
 #### Bluetooth
 
