@@ -38,7 +38,7 @@ Project:    CARUTZA
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
 Panel::Panel(CfgPanel* pe, QWidget *parent)
-    : QWidget2(pe, parent),_inotify(0),
+    : CtrlHolder(pe, parent),_inotify(0),
                       _moved(false),
                       _overflow(0),
                       _layerwidth(0),
@@ -65,33 +65,23 @@ Panel::~Panel(void)
   -------------------------------------------------------------------------------------*/
 void Panel::_config_ui()
 {
-    if(_pconfpan->_height>0)
-    {
-        _basefolder = _pconfpan->_dir;
-        _curfolder = _basefolder;
-        int ypos = _pconfpan->_position.height();
-        this->move(_pconfpan->_position.width(), ypos);
-        _pos.setWidth(_pconfpan->_position.width());
-        _pos.setHeight(ypos);
+    _basefolder = _pcfg->_dir;
+    _curfolder = _basefolder;
 
-        _layout = new QHBoxLayout();
-        _layout->setSpacing(_pconfpan->_spacing);
-        if(_pconfpan->_align==1)
-            _layout->setDirection(QBoxLayout::LeftToRight);
-        else if(_pconfpan->_align==2)
-            _layout->setDirection(QBoxLayout::RightToLeft);
-        _layout->setSizeConstraint(QBoxLayout::SetMaximumSize);
-        _layout->setContentsMargins(0, 0, 0, 0);
-        _load_controls(_basefolder);
-        this->setLayout(_layout);
-        this->move(_pos.width(),_pos.height());
-        this->show();
-    }
+    int x = _pcfg->_rect.width(),y=_pcfg->_rect.height();
+    this->resize(x, y);
+    x = _pcfg->_rect.left(),y=_pcfg->_rect.top();
+    this->move(x,y);
+
+    _layout_it();
+    _load_controls(_basefolder);
+
+    this->show();
 }
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-size_t  Panel::_load_buts(const QString& folder, const QSize& sz, std::vector<XwnSet>& buts)
+size_t  Panel::_load_buts(const QString& folder, const QPoint& sz, std::vector<XwnSet>& buts)
 {
     QDir            dir(folder);
     QFileInfoList   files = dir.entryInfoList();
@@ -110,56 +100,56 @@ size_t  Panel::_load_buts(const QString& folder, const QSize& sz, std::vector<Xw
 
         if(sfile.endsWith(".desktop") || sfile.endsWith(".desktopp"))
         {
-            QSettings df(sfile, QSettings::NativeFormat, 0);
+            MySett df(sfile);
             XwnSet butset;
-            if(butset.Load(df))
+            if(df.ok() && butset.Load(df))
             {
                 butset._wt = XwnSet::WIG_DESKTOP;
-                cond_if(butset._icwh.width()<=0,butset._icwh = sz);
-                cond_if(butset._align==0,butset._align = _pconfpan->_align);
-                icwidth+=butset._icwh.width()+_pconfpan->_spacing;
+                cond_if(butset._icwh.x()<=0,butset._icwh = sz);
+                cond_if(butset._align==0,butset._align = _pcfg->_align);
+                icwidth+=butset._icwh.x()+_pcfg->_spacing;
                 buts.push_back(butset);
             }
         }
         else if(sfile.endsWith(".applet") )
         {
-            QSettings df(sfile, QSettings::NativeFormat, 0);
+            MySett df(sfile);
             XwnSet butset;
-            if(butset.Load(df))
+            if(df.ok() && butset.Load(df))
             {
                 butset._wt = XwnSet::WIG_APPLET;
-                cond_if(butset._icwh.width()<=0, butset._icwh = sz);
-                cond_if(butset._align==0,butset._align = _pconfpan->_align);
-                icwidth+=butset._icwh.width()+_pconfpan->_spacing;
+                cond_if(butset._icwh.x()<=0, butset._icwh = sz);
+                cond_if(butset._align==0,butset._align = _pcfg->_align);
+                icwidth+=butset._icwh.x()+_pcfg->_spacing;
                 buts.push_back(butset);
             }
         }
         else if(sfile.endsWith(".signal") ) // internal function signal call
         {
-            QSettings df(sfile, QSettings::NativeFormat, 0);
+            MySett df(sfile);
             XwnSet butset;
-            if(butset.Load(df))
+            if(df.ok() && butset.Load(df))
             {
                 butset._wt = XwnSet::WIG_SIGNAL;
-                cond_if(butset._icwh.width()<=0, butset._icwh = sz);
-                cond_if(butset._align==0,butset._align = _pconfpan->_align);
-                icwidth+=butset._icwh.width()+_pconfpan->_spacing;
+                cond_if(butset._icwh.x()<=0, butset._icwh = sz);
+                cond_if(butset._align==0,butset._align = _pcfg->_align);
+                icwidth+=butset._icwh.x()+_pcfg->_spacing;
                 buts.push_back(butset);
             }
         }else if(fi.isDir() && !fi.isHidden())
         {
-            QSettings df(sfile+"/desktop.conf", QSettings::NativeFormat, 0);
+            MySett df(sfile+"/desktop.conf");
             XwnSet butset;
             butset.Load(df);
             butset._pname=">";
             butset._cmd=sfile; //which folder to change
-            cond_if(butset._icwh.width()<=0, butset._icwh = sz);
-            cond_if(butset._align==-1,butset._align = _pconfpan->_align);
-            icwidth+=butset._icwh.width()+_pconfpan->_spacing;
+            cond_if(butset._icwh.x()<=0, butset._icwh = sz);
+            cond_if(butset._align==-1,butset._align = _pcfg->_align);
+            icwidth+=butset._icwh.x()+_pcfg->_spacing;
             buts.push_back(butset);
         }
     }
-    cond_if(folder != _basefolder, icwidth += sz.width()+1); /// add back buton space
+    cond_if(folder != _basefolder, icwidth += sz.x()+1); /// add back buton space
     return icwidth;
 }
 
@@ -177,12 +167,12 @@ void Panel::fit_to_parent(const QSize& proom)
   -------------------------------------------------------------------------------------*/
 void Panel::_load_controls(const QString& folder)
 {
-    QSize               sz = _pconfpan->_icons;
+    QPoint              sz = _pcfg->_icons;
     std::vector<XwnSet> buts;
     int                 swidth=_parent_width();
 
-    cond_if(sz.width()<=0, sz= QSize(64,64));
-    _icwidth = sz.width();
+    cond_if(sz.x()<=0, sz= QPoint(64,64));
+    _icwidth = sz.x();
     std::vector<QWidget*>::iterator b = _butons.begin();
     for(;b!= _butons.end();++b)
     {
@@ -190,11 +180,11 @@ void Panel::_load_controls(const QString& folder)
     }
     _butons.clear();
     _layerwidth = _load_buts(folder, sz, buts);
-    //cond_if(_layerwidth <= swidth, _layerwidth = swidth);
+    if(_layerwidth < _pcfg->_rect.width())
+        _layerwidth = _pcfg->_rect.width(); // mco-2020
     this->setFixedWidth(_layerwidth);
-    this->resize(_layerwidth, _pconfpan->_height);
-    int ypos = _pconfpan->_position.height();
-    this->move(_pconfpan->_position.width(),ypos);
+    this->resize(_layerwidth, _pcfg->_rect.height());
+    this->move(_pcfg->_rect.left(),_pcfg->_rect.top());
 
     if(folder != _basefolder)
     {
@@ -210,10 +200,11 @@ void Panel::_load_controls(const QString& folder)
                 SLOT(done_scrolling(int)));
         connect(pb,SIGNAL(sig_scrolled(int)),this,
                 SLOT(done_scrolling(int)));
-        _layout->addWidget(pb,0,Qt::AlignRight);
+        _add_widget(pb,Qt::AlignRight);
         _butons.push_back(pb);
     }
-
+    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align-1));
+    _layout->setSpacing(_pcfg->_spacing);
     int idx=0;
     std::vector<XwnSet>::iterator it = buts.begin();
     for(;it!= buts.end();++it)
@@ -222,7 +213,8 @@ void Panel::_load_controls(const QString& folder)
         ++idx;
     }
 
-    _layout->setAlignment((Qt::AlignmentFlag)_pconfpan->_align);
+    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align-1));
+    _layout->setSpacing(_pcfg->_spacing);
     usleep(10000);
     if(_inotify)
     {
@@ -253,7 +245,7 @@ void Panel::_add_button(const XwnSet& xs, int index)
             connect(pb,SIGNAL(sig_clicked(OdButton*)),this,SLOT(change_folder(OdButton*)));
         else
             connect(pb,SIGNAL(sig_clicked(OdButton*)),this,SLOT(run_app(OdButton*)));
-        _layout->addWidget(pb, 0,(Qt::AlignmentFlag)xs._align);
+        _add_widget(pb, xs._align);
     }
     else if(xs._wt == XwnSet::WIG_SIGNAL)
     {
@@ -279,7 +271,7 @@ void Panel::_add_button(const XwnSet& xs, int index)
             else
                 connect(pb,SIGNAL(sig_clicked(OdButton*)),this,SLOT(run_app(OdButton*)));
         }
-        _layout->addWidget(pb, 0,(Qt::AlignmentFlag)xs._align);
+        _add_widget(pb, xs._align);
     }
     else
     {
@@ -289,7 +281,7 @@ void Panel::_add_button(const XwnSet& xs, int index)
         connect(pb,SIGNAL(sig_moving(OdButton*,int,int)),this,SLOT(scrool_lancer(OdButton*,int,int)));
         connect(pb,SIGNAL(sig_scrolled(int)),this,SLOT(done_scrolling(int)));
 
-        _layout->addWidget(pb, 0,(Qt::AlignmentFlag)xs._align);
+        _add_widget(pb, xs._align);
     }
      _butons.push_back(pb);
 }
@@ -346,7 +338,7 @@ void Panel::run_app(OdButton* pb)
 {
     _folderchanged=false;
     //PA->runapp(pb->xset());
-    QWidget2::run_app(pb);
+    CtrlHolder::run_app(pb);
 }
 
 /*--------------------------------------------------------------------------------------
@@ -460,7 +452,7 @@ void Panel::_scrool_lancer(int dx ,int dy)
         newx=0;
     else if (newx < -(this->width() -swidth))
         newx=-(this->width() - swidth);
-    move(newx, _pconfpan->_position.height());
+    move(newx, _pcfg->_rect.y());
    _moved=true;
 }
 
@@ -547,7 +539,7 @@ void   Panel::refresh_buts()
         if(pb)
             pb->refresh();
     }
-    this->move(_pos.width(),_pos.height());
+    this->move(_pcfg->_rect.left(),_pcfg->_rect.top());
 }
 
 /*--------------------------------------------------------------------------------------
@@ -578,9 +570,7 @@ int Panel::_parent_width()
         if(pqw)
             return pqw->rect().width();
     }
-    if(_pconfpan->_width>0)
-        return _pconfpan->_width;
-    return CFG(_drect.width());
+    return CFG(_drect.y());
 }
 
 /*--------------------------------------------------------------------------------------

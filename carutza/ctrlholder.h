@@ -24,34 +24,52 @@ Credits
 antico:     g_cigala@virgilio.it, ludmiloff@gmail.com
 
 */
-//-----------------------------------------------------------------------------
-// Created: July 2013
-// Author:  Marius C. @
-//-----------------------------------------------------------------------------
 
-#ifndef XESKTOP_H
-#define XESKTOP_H
+#ifndef __QWidget2_H
+#define __QWidget2_H
 
-#include "defs.h"
-#include <ctrlholder.h>
+#include <QWidget>
+#include <QLayout>
+#include <QBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include "imagez.h"
 
-//-----------------------------------------------------------------------------
-class Desktop : public CtrlHolder
+class QPixmap;
+class QColor;
+class CfgPanel;
+class OdButton;
+class LunchButt;
+
+
+class CtrlHolder : public QWidget
 {
     Q_OBJECT
 
 public:
-    Desktop(QWidget *parent=0);
-    ~Desktop();
-    void init();
-    void load_wall_paper(const QString &path);
+    CtrlHolder(CfgPanel* pconfpan, QWidget *parent = 0);
+    virtual ~CtrlHolder();
+    OdButton*  get_widget(const QString& pname)const;
+    CfgPanel* conf()const{return  _pcfg;}
+
+protected:
+    virtual void _config_ui();
+    virtual void _load_controls(const QString& folder);
+    void        _layout_it();
+    void        _add_widget(QWidget* pw, int align);
+
+protected:
+    void paintEvent(QPaintEvent *event);
 
 public slots:
-    void run_menu(QAction *);
+    //void run_app2(OdButton* pb);
+    void run_app(OdButton* pb);
 
-private:
-    QBoxLayout *_boxlayout;
-    QMenu*      _menu;
+protected:
+    Imagez*   _q_pixmap;
+    CfgPanel* _pcfg;
+    QLayout*  _layout;
+    std::vector<QWidget*>   _butons;
 };
 
 #endif

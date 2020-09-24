@@ -1,5 +1,7 @@
-Pname=@clock_applet
-Isize=@Size(240 30)
-bckcolor=1
-fontcolor=65535
-align=2
+{
+    Pname       {&clock_applet}
+    Isize       {240,30}
+    bckcolor    {1}
+    fontcolor   {65535}
+    align       {2}
+}

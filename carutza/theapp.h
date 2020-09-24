@@ -33,7 +33,6 @@ antico:     g_cigala@virgilio.it, ludmiloff@gmail.com
 #include "desktop.h"
 #include "dockbar.h"
 #include "panel.h"
-#include "container.h"
 #include "mysett.h"
 #include <set>
 #include <vector>

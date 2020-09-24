@@ -32,11 +32,11 @@ Project:    CARUTZA
 
 /*-----------------------------------------------------------------------------
 -----------------------------------------------------------------------------*/
-Appman::Appman(Panel *p, const QSize& size, const XwnSet& set, QWidget *parent)
+Appman::Appman(Panel *p, const QPoint& size, const XwnSet& set, QWidget *parent)
     : OdButton(p, size, set, parent),_pactive(0),_sibling(0),_secondinst(0),_ptokill(0)
 {
     PA->set_appman(this);
-    setFixedSize(size);
+    setFixedSize(size.x(),size.y());
     set_image(CFG(_images),set._icon);
 }
 

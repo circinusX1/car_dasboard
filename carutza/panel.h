@@ -28,7 +28,7 @@ Project:    CARUTZA
 #include <QWidget>
 #include <QPropertyAnimation>
 #include "defs.h"
-#include "qwidget2.h"
+#include "ctrlholder.h"
 #include "dskwatch.h"
 #include "imagez.h"
 #include <vector>
@@ -41,7 +41,7 @@ class LunchButt;
 class QsLunchButt;
 struct XwnSet;
 struct CfgPanel;
-class Panel : public QWidget2
+class Panel : public CtrlHolder
 {
     Q_OBJECT
 public:
@@ -73,7 +73,8 @@ protected:
     void    _done_scrooling(int);
     void    _scrool_lancer(int dx ,int dy);
     void    _add_button(const XwnSet& xs, int index) ;
-    size_t  _load_buts(const QString& folder, const QSize& sz, std::vector<XwnSet>& buts);
+    size_t  _load_buts(const QString& folder, const QPoint& sz,
+                       std::vector<XwnSet>& buts);
     void    _calc_overflow();
     void    _update_btnsel();
     void    _overlay_overflow();
@@ -98,7 +99,6 @@ protected:
     int             _selected;
     bool            _hidden;
     bool            _folderchanged;
-    QSize           _pos;
 };
 
 

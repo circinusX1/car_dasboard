@@ -1,6 +1,7 @@
-Pname=@signal
-Name=" "
-XRect=2
-Icon=signal.png
-~Xframe=0
-
+{
+Pname{&signal}
+Name{" "}
+XRect{2}
+Icon{signal.png}
+~Xframe{0}
+}

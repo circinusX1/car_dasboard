@@ -1,9 +1,10 @@
-Pname=banshee
-Name=" "
-Exec="banshee"
-Xrect=0
-Icon=mediaplayer
-
+{
+Pname{banshee}
+Name{" "}
+Exec{"banshee"}
+Xrect{0}
+Icon{mediaplayer}
+}
 
 
 

@@ -22,7 +22,6 @@ Project:    CARUTZA
 /*-----------------------------------------------------------------------------
 -----------------------------------------------------------------------------*/
 #include <iostream>
-#include <QSettings>
 #include <QIcon>
 #include <QDebug>
 #include <unistd.h>
@@ -95,7 +94,9 @@ bool Imagez::load_image(const char* path,
 
     if(force)
     {
-        fp = config.images()+"noimage.png";
+        if(fp.isEmpty() || fp=="0")
+            return false;
+
         if(0==::access(fp.toUtf8(),0))
         {
             bool br = QPixmap::load(fp, format, flags);

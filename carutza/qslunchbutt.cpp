@@ -27,7 +27,7 @@ Project:    CARUTZA
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-QsLunchButt::QsLunchButt(Panel* p, const QSize& size, const XwnSet& cmd,
+QsLunchButt::QsLunchButt(Panel* p, const QPoint& size, const XwnSet& cmd,
                          QWidget *parent):LunchButt(p,size,cmd,parent),_opened(false)
 {
     QString fn(p->cur_dir() + cmd._pname);

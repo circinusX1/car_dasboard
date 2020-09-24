@@ -106,20 +106,6 @@ void TheApp::show_panel(const QString& panel, bool show)
         }
     }
 
-
-    std::vector<Container*>::iterator fc =  _containers.begin();
-    for(;fc != _containers.end(); ++f)
-    {
-        const CfgPanel* cp = (*fc)->conf();
-        if(cp->_name==panel)
-        {
-            if(show)
-                (*fc)->show();
-            else
-                (*fc)->hide();
-            break;
-        }
-    }
 }
 
 
@@ -136,12 +122,11 @@ void TheApp::init(MySett& s)
     setApplicationName("dashdash");
     ::XGrabKeyboard(DPY(), ROOT_XWIN(), TRUE, GrabModeAsync, GrabModeAsync, CurrentTime);
     CFG(load_panels(_panels));
-    CFG(load_containers(_containers));
     _dskwidget  = new Desktop();
     if(_papp_man==0)
     {
         XwnSet dummy;
-        _papp_man = new Appman(0, QSize(32,32), dummy);
+        _papp_man = new Appman(0, QPoint(32,32), dummy);
         _papp_man->move(0,0);
         //_papp_man->show();
     }

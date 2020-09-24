@@ -169,6 +169,7 @@ void XClient::init()
 void XClient::make_frame()
 {
     qDebug() << "CREATE DECORATIONS FOR ROLE " << _xwclass;
+
     if (_xwclass == x11atoms::Splash)
     {
         return;
@@ -781,7 +782,8 @@ void XClient::bring_to_top()
   -------------------------------------------------------------------------------------*/
 void XClient::slot_show_top()
 {
-    //PA->appman()->set_active_xwin(this,false);
-    //bring_to_top();
+    PA->appman()->set_active_xwin(this,false);
+    bring_to_top();
+    this->move(0,250);
 }
 

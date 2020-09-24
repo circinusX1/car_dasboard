@@ -41,7 +41,7 @@ class QsLunchButt : public LunchButt
 {
     Q_OBJECT
 public:
-     QsLunchButt(Panel* p, const QSize& size, const XwnSet& cmd, QWidget *parent=0);
+     QsLunchButt(Panel* p, const QPoint& size, const XwnSet& cmd, QWidget *parent=0);
      virtual ~QsLunchButt();
 
 public:

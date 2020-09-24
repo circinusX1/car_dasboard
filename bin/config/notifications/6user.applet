@@ -1,4 +1,4 @@
-Pname=@welcome_applet
+Pname=&welcome_applet
 Name="Dashboard"
 Isize=@Size(346 30)
 bckcolor=1

@@ -1,7 +1,8 @@
-Pname=@weather
-Name=" "
-XRect=2
-Isize=@Size(64 30)
-Icon=weather
-Xframe=0
-
+{
+Pname{&weather}
+Name{" "}
+XRect{2}
+Isize{64,30}
+Icon{weather}
+Xframe{0}
+}

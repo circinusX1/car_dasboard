@@ -31,7 +31,7 @@ extern TheApp* APP;
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-Desktop::Desktop(QWidget *parent) : QWidget2(0, parent)
+Desktop::Desktop(QWidget *parent) : CtrlHolder(0, parent)
 {
     PA->wm_add_ignorewid(this->winId());
     _boxlayout = new QHBoxLayout();
@@ -52,8 +52,8 @@ void Desktop::init()
 {
     setGeometry(CFG(top_gap()),
                 0,
-                CFG(_drect).width(),
-                CFG(_drect).height()-CFG(bottom_gap()));
+                CFG(_drect).x(),
+                CFG(_drect).y()-CFG(bottom_gap()));
     load_wall_paper(CFG(_theme));
     this->lower();
     setWindowFlags(Qt::WindowStaysOnBottomHint);

@@ -23,41 +23,126 @@ Project:    CARUTZA
 #ifndef DASHCONFIG_H
 #define DASHCONFIG_H
 
-#include <QSettings>
 #include <QRect>
 #include <QFile>
+#include <QStringList>
 #include <stdlib.h>
 #include <vector>
+#include "akajson.h"
 
 class XwnSet;
 struct CfgPanel
 {
-    CfgPanel():_height(-1),
-               _width(-1),
-               _align(1),
+    CfgPanel(): _align(1),
                _notify(false),
                _arrange(0),
-               _spacing(1)
+               _spacing(1),
+               _layout(0) //horozontal, 1 vertical 2 grid
     {
     }
-    int     _height;
-    int     _width; // container needs this
     int     _align;
     bool    _notify;
     int     _arrange;
     int     _spacing;
-    QSize   _position;
-    QSize   _icons;
+    int     _layout;
+    QRect   _rect;
+    QPoint   _icons;
     QString _dir;
     QString _name;
     QString _bgimage;
     std::vector<QString> _kids;
 };
 
+class MySett;
+class QtKisstu : public Kisstu
+{
+    QString _fn;
+public:
+    QtKisstu()
+    {
+        _curent = this->root();
+    }
+    QtKisstu(const QString& file)
+    {
+        _fn=file;
+        parse(file);
+        _curent = this->root();
+    }
+    const QString& fileName(){return _fn;}
+    struct Typoc{
+        std::string _s[4]={"0","-1","-1","0"};
+        Typoc(const Kisstu::Node* pn){
+            if(pn!=nullptr){
+                size_t els = pn->count();
+                for(size_t e=0;e<els;e++)
+                {
+                    _s[e] = pn->value(e);
+                    if(_s[e]=="MAX")_s[e]="-1";
+                    if(_s[e]=="NEXT")_s[e]="-2";
+                }
+            }
+        }
+        QString toString()const{return QString(_s[0].c_str());}
+        bool toBool()const{return _s[0]=="true";}
+        int toInt()const{return std::stod(_s[0]);}
+        QRect toRect()const{
+            QRect r;
+            r.setX(std::stod(_s[0]));
+            r.setY(std::stod(_s[1]));
+            r.setRight(std::stod(_s[2]));
+            r.setBottom(std::stod(_s[3]));
+            return r;
+        }
+        QSize toSize()const{
+            return QSize(std::stod(_s[0]),
+                         std::stod(_s[1]));
+        }
+        QPoint toPoint()const{
+            return QPoint(std::stod(_s[0]),
+                          std::stod(_s[1]));
+        }
+    };
+
+    const Typoc value(const char* key, int dev=0){
+        const Node* pn = _curent->pnode(key);
+        if(pn==nullptr)
+        {
+            printf("null \n");
+        }
+        return Typoc(pn);
+    }
+
+    const Typoc value(const QString& key, int dev0=0){
+        const Node* pn = _curent->pnode(key.toUtf8());
+        return Typoc(pn);
+    }
+
+    bool beginGroup(const char* ks)
+    {
+        const Node* pn = _curent->pnode(ks);
+        if(pn){
+            _curent = _curent->pnode(ks);
+            return true;
+        }
+        return false;
+    }
+
+    void endGroup()
+    {
+        _curent = root();
+    }
+
+
+
+
+    const Kisstu::Node*  _curent;
+};
+
+
 
 class Panel;
 class Container;
-class MySett : public QSettings
+class MySett : public QtKisstu
 {
 public:
 
@@ -68,11 +153,13 @@ public:
         int    _timing;
     };
 
-
-    static bool read_rect(QSettings&s, const QString& entry ,QRect& xpos,bool ownd=false,
-                          int off=0);
+    bool read_rect(MySett& conf,
+                   const char* entry,
+                   QRect& xpos,
+                   bool ownd,
+                   int offset);
     static MySett& config(const QString* ps=0);
-    MySett(const QString &fileName, Format format, int global=false);
+    MySett(const QString &fileName, bool global=false);
     QString stringValue(const QString& key)
     {
         QString value = this->value(key).toString();
@@ -83,13 +170,13 @@ public:
         }
         return value;
     }
+    bool ok()const{return _ok;}
     void  load_panels(std::vector<Panel*>& panels);
-    void  load_containers(std::vector<Container*>& containers);
     const QString& base()const{return _base;}
     const QString& home()const{return _workdir;}
     const QString& desktop()const{return  _desk;}
     const QString& images()const{return _images;}
-    const QRect& drect()const{return _drect;}
+    const QPoint& drect()const{return _drect;}
     void    startapps();
     void    prestartapps();
     void    mangle(QString& s);
@@ -97,10 +184,10 @@ public:
     void    finalize();
     QString read_mangled(const char* entry);
     const QString& theme_path();
-    bool  is_portret()const{return _drect.height() > _drect.width();}
-    int   lanch_space()const{return is_portret() ? _drect.width() : _drect.height();}
-    int  top_gap()const;
-    int  bottom_gap()const;
+    bool  is_portret()const{return _drect.x() > _drect.y();}
+    int   lanch_space()const{return is_portret() ? _drect.y() : _drect.y();}
+    int   top_gap()const;
+    int   bottom_gap()const;
 private:
     int     _parse_value(const QString value, QRect& _get_screen);
 
@@ -114,12 +201,12 @@ public:
     QString _wallpaper;
     int     _displays;
     int     _display;
-    QRect   _drect;
+    QPoint  _drect;
     int     _fontpercent;
     int     _killdelay;
     std::vector<ShowHide> _showhide;
     std::map<QString, CfgPanel>    _panels;
-    std::map<QString, CfgPanel>    _containers;
+    bool    _ok=false;
 };
 
 
@@ -174,17 +261,17 @@ struct XwnSet
     QString  _cmd;
     QString  _icon;
     QString  _caticon;
-    QSize    _icwh;
+    QPoint    _icwh;
     QString  _hidepanels;
     QString  _font; // Font="10,75,1,arial"   size, weight, bold, face
 
-    bool     Load(QSettings& s)
+    bool     Load(MySett& s)
     {
         bool ingroup = false;
         _pname = s.value("Pname").toString();
         if(_pname.isEmpty())
         {
-            s.beginGroup("Desktop Entry");
+            s.beginGroup("DesktopEntry");
              ingroup = true;
         }
 
@@ -199,14 +286,14 @@ struct XwnSet
              newfile.replace(lastBit,"");
 
              newfile += _cmd.right(_cmd.length()-1);
-             QSettings s2(newfile, QSettings::NativeFormat);
+             QtKisstu s2(newfile);
              _cmd = s2.value("Exec").toString();
         }
         _name = s.value("Name").toString();
         _pname = s.value("Pname").toString();
         _owndesktop= s.value("OwnDesktop").toBool();
         _hidden= s.value("Hidden").toBool();
-        _icwh= s.value("Isize").toSize();
+        _icwh= s.value("Isize").toPoint();
         _rpos = s.value("Xrect").toInt();
         _icon = s.value("Icon").toString();
         _caticon = s.value("CatIcon").toString();
@@ -225,7 +312,7 @@ struct XwnSet
         _talign = s.value("talign").toInt();
         _nopush = s.value("nopush").toBool();
         _state = s.value("state").toInt();
-        MySett::read_rect(s, "Xrect", _rect, _owndesktop, _hoffset);
+        s.read_rect(s, "Xrect", _rect, _owndesktop, _hoffset);
         if(ingroup)
             s.endGroup();
         if(_name.isEmpty())

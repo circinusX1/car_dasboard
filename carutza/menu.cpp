@@ -68,8 +68,9 @@ bool compareMnuAct(DskMenu *a1, DskMenu *a2)
 }
 
 //-----------------------------------------------------------------------------
-MenuButton::MenuButton(QWidget2 *p, const QSize& size, const XwnSet& set, QWidget *parent)
-    : OdButton(p, size, set, parent)
+MenuButton::MenuButton(CtrlHolder *p, const QPoint& size,
+                       const XwnSet& set, QWidget *parent)
+                        : OdButton(p, size, set, parent)
 {
     setText("Apps...");
 	_sc_catalog["Utility"] = new QIcon("util.png");
@@ -82,7 +83,7 @@ MenuButton::MenuButton(QWidget2 *p, const QSize& size, const XwnSet& set, QWidge
 	_sc_catalog["Development"] = new QIcon("devel.png");
 	_sc_catalog["Other"] = new QIcon("others.png");
 	create();
-    setFixedSize(size);
+	setFixedSize(size.x(),size.y());
 	connect(this, SIGNAL(clicked()), this, SLOT(slot_show_menu()));
 }
 

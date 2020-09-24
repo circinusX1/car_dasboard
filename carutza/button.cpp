@@ -29,7 +29,7 @@ Project:    CARUTZA
 
 /*-----------------------------------------------------------------------------
 -----------------------------------------------------------------------------*/
-OdButton::OdButton(QWidget2 *p, const QSize& sz,const XwnSet& set, QWidget *parent):
+OdButton::OdButton(CtrlHolder *p, const QPoint& sz,const XwnSet& set, QWidget *parent):
     QToolButton(parent),_set(set),
                         _btype(TEXT_BUTON),
                         _state(S_NORMAL),
@@ -37,8 +37,8 @@ OdButton::OdButton(QWidget2 *p, const QSize& sz,const XwnSet& set, QWidget *pare
                         _abtomove(false)
 {
     Q_UNUSED(p);
-    cond_if(_initsz.width()<=0, _initsz=QSize(64,64));
-    setFixedSize(sz);
+    cond_if(_initsz.x()<=0, _initsz=QPoint(64,64));
+    setFixedSize(sz.x(), sz.y());
     setText(set._name);
 
     //Font="14,75,arial"   size, weight, bold, face
@@ -48,9 +48,11 @@ OdButton::OdButton(QWidget2 *p, const QSize& sz,const XwnSet& set, QWidget *pare
         QStringList lf = _set._font.split(',');
         for(int k=0;k<lf.size();++k)
         {
+            if(lf[k]=="0")   lf[k]="16";
             switch(k)
             {
                 case 0:
+
                     f.setPointSize(lf[k].toInt());
                     break;
                 case 1:
@@ -71,7 +73,7 @@ OdButton::OdButton(QWidget2 *p, const QSize& sz,const XwnSet& set, QWidget *pare
     {
         f.setBold(true);
         f.setWeight(75);
-        int fsz = _initsz.height() * (CFG(_fontpercent)/100);
+        int fsz = _initsz.y() * (CFG(_fontpercent)/100);
         cond_if(fsz==0,  fsz=12);
         f.setPointSize(fsz);
     }
@@ -93,7 +95,8 @@ OdButton::~OdButton()
 bool OdButton::set_cat_image(const char* path, const char* imagefile)
 {
     Imagez  ipixa;
-
+    if(imagefile=="0")
+        return false;
     if(ipixa.load_image(path,imagefile))
     {
        _caticon.addPixmap(ipixa, QIcon::Normal, QIcon::Off);
@@ -113,10 +116,11 @@ bool OdButton::set_image(const char* path, const char* imagefile)
 
     if(*imagefile==0)
         return false;
-
+    if(imagefile==0 || imagefile[0]=='0')
+        return false;
     if(!ipixa.load_image(path,imagefile))
     {
-        QPixmap pixmap(_initsz.width()-2,_initsz.height()-2);
+        QPixmap pixmap(_initsz.x()-2,_initsz.y()-2);
 
         pixmap.fill(QColor(192,192,192));
         _icon.addPixmap(pixmap, QIcon::Normal, QIcon::Off);
@@ -261,8 +265,8 @@ void OdButton::_draw_image()
     QPainter painter(this);
     QRect    rect(painter.window());
     QSize    sz = _icon.actualSize(this->size(),QIcon::Normal, QIcon::Off);
-    int      x = (_initsz.width()-sz.width())/2;
-    int      y = (_initsz.height()-sz.height())/2;
+    int      x = (_initsz.x()-sz.width())/2;
+    int      y = (_initsz.y()-sz.height())/2;
     int      icstate[]= {QIcon::Normal,
                          QIcon::Active, 0, 0,
                          QIcon::Disabled, 0, 0, 0,

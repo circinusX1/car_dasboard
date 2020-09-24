@@ -1,9 +1,10 @@
-Pname=this
-Name=" "
-Exec=Appman
-Xrect=0
-Icon=x.png
-align=1
-ialign=1
-Isize=@Size(264 72)
-
+{
+Pname{this}
+Name{" "}
+Exec{Appman}
+Xrect{0}
+Icon{x.png}
+align{1}
+ialign{1}
+Isize{264,72}
+}

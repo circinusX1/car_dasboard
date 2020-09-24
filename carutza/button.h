@@ -30,7 +30,7 @@ antico:     g_cigala@virgilio.it, ludmiloff@gmail.com
 #include "mysett.h"
 #include "defs.h"
 
-class QWidget2;
+class CtrlHolder;
 class OdButton : public QToolButton
 {
 	Q_OBJECT
@@ -46,12 +46,14 @@ public:
                     IMG_BUTON=0x1,
                     TEXT_BUTON=0x2
                  };
-    explicit OdButton(QWidget2 *p, const QSize& sz, const XwnSet& set,
+    explicit OdButton(CtrlHolder *p, const QPoint& sz, const XwnSet& set,
                        QWidget *parent);
 	virtual ~OdButton(void);
     const   XwnSet& xset()const{return _set;}
     bool    set_image(const char* path, const  char* imagefile);
+
     bool    set_cat_image(const char* path, const char* imagefile);
+
     void    set_bstate(OdButton::E_BSTATE s){_state=s; update();}
     void    set_font_size(const QSize& sz);
     void    refresh();
@@ -91,7 +93,7 @@ protected:
     E_BSTATE    _state;
     QIcon       _icon;
     QIcon       _caticon;
-    QSize       _initsz;
+    QPoint       _initsz;
     QPoint      _presspt;
     QPoint      _initp;
     bool        _abtomove;

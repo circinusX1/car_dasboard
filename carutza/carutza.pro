@@ -25,6 +25,8 @@ TARGET = carutza
 TEMPLATE = app
 
 SOURCES += main.cpp\
+    akajson.cpp \
+    ctrlholder.cpp \
     desktop.cpp \
     menu.cpp \
     button.cpp \
@@ -34,7 +36,6 @@ SOURCES += main.cpp\
     theapp.cpp \
     wxframe.cpp \
     lunchbutt.cpp \
-    qwidget2.cpp \
     qwidgeticon.cpp \
     dskwatch.cpp \
     appman.cpp \
@@ -42,11 +43,12 @@ SOURCES += main.cpp\
     x11atoms.cpp \
     panel.cpp \
     qslunchbutt.cpp \
-    container.cpp \
     dbusipc.cpp \
     dashdb_iface.cpp
 
 HEADERS  += \
+    akajson.h \
+    ctrlholder.h \
     desktop.h \
     defs.h \
     menu.h \
@@ -59,7 +61,6 @@ HEADERS  += \
     theapp.h \
     wxframe.h \
     lunchbutt.h \
-    qwidget2.h \
     qwidgeticon.h \
     events.h \
     dskwatch.h \
@@ -68,7 +69,6 @@ HEADERS  += \
     x11atoms.h \
     panel.h \
     qslunchbutt.h \
-    container.h \
     dbusipc.h \
     dashdb_iface.h
 
@@ -128,10 +128,39 @@ OTHER_FILES += \
     ../bin/Desktop/.overflow/1left.control
 
 DISTFILES += \
+    ../bin/Desktop/1nav.desktop \
+    ../bin/Desktop/2media.desktop \
+    ../bin/Desktop/3phone.desktop \
+    ../bin/Desktop/4rearview.desktop \
+    ../bin/Desktop/4rearview.desktop-disabled \
+    ../bin/Desktop/4rearview.~desktop \
+    ../bin/Desktop/audacious.widget \
+    ../bin/Desktop/bt.widget \
+    ../bin/Desktop/calc.widget \
+    ../bin/Desktop/firefox.widget \
+    ../bin/Desktop/firefox.widget.save \
+    ../bin/Desktop/ioc.widget \
+    ../bin/Desktop/mplayer.widget \
+    ../bin/Desktop/op_pview.widget \
+    ../bin/Desktop/vnc.widget \
+    ../bin/Desktop/vnc.widget.txt \
+    ../bin/Desktop/volume.widget \
+    ../bin/Desktop/xfce.widget \
     ../bin/config/bottompanel/1x.signal \
     ../bin/config/bottompanel/2climate.desktop \
     ../bin/config/bottompanel/3controls.desktop \
     ../bin/config/bottompanel/4volume.desktop \
+    ../bin/config/carutza.kiss \
+    ../bin/config/desktop/1left.control \
+    ../bin/config/desktop/2right.control \
+    ../bin/config/desktop/camera.desktopp \
+    ../bin/config/desktop/desktop.conf \
+    ../bin/config/desktop/face.-desktopp \
+    ../bin/config/desktop/facebook.-desktopp \
+    ../bin/config/desktop/linedin.desktopp \
+    ../bin/config/desktop/pandora.~desktop \
+    ../bin/config/desktop/twiter.desktopp \
+    ../bin/config/desktop/xm.desktop \
     ../bin/config/notifications/1clock.applet \
     ../bin/config/notifications/2weather.applet \
     ../bin/config/notifications/3bt.applet \

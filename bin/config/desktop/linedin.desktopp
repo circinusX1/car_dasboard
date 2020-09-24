@@ -1,0 +1,9 @@
+{
+pname{firefox}
+Name{" "}
+Exec{"firefox http://www.linkedin.com/"}
+Xrect{0}
+icon{linedin}
+}
+
+

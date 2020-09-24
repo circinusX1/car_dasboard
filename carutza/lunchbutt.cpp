@@ -23,7 +23,7 @@ Project:    CARUTZA
 -----------------------------------------------------------------------------*/
 #include "theapp.h"
 #include "panel.h"
-#include "container.h"
+
 #include "button.h"
 #include "mysett.h"
 #include "imagez.h"
@@ -31,7 +31,7 @@ Project:    CARUTZA
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-LunchButt::LunchButt(QWidget2 *p, const QSize& size, const XwnSet& set, QWidget *parent)
+LunchButt::LunchButt(CtrlHolder *p, const QPoint& size, const XwnSet& set, QWidget *parent)
     : 	OdButton(p, size, set, parent)
 {
 

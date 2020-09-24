@@ -33,7 +33,7 @@ class Appman : public OdButton
 {
     Q_OBJECT
 public:
-    Appman(Panel *p, const QSize& size, const XwnSet& set, QWidget *parent = 0);
+    Appman(Panel *p, const QPoint& size, const XwnSet& set, QWidget *parent = 0);
     ~Appman();
    virtual void on_click();
 

@@ -1,4 +1,6 @@
-Pname=blueman-manager
-Name=" "
-Icon=bbt.png
-Exec=blueman-manager
+{
+Pname{blueman-manager}
+Name{" "}
+Icon{bbt.png}
+Exec{blueman-manager}
+}

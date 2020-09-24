@@ -25,14 +25,14 @@ egg:        @author José Expósito
 antico:     g_cigala@virgilio.it, ludmiloff@gmail.com
 */
 
-#ifndef __MENU_H
-#define __MENU_H
+#ifndef __MENUX_H
+#define __MENUX_H
 
 #include "defs.h"
 #include "button.h"
 
 class panel;
-
+class MenuButton ;
 class DskMenu : public QAction
 {
 	Q_OBJECT
@@ -53,7 +53,7 @@ private:
 class MenuButton : public OdButton
 {
 public:
-    explicit MenuButton(QWidget2 *p, const QSize& size,const XwnSet& set,  QWidget *parent=0);
+	explicit MenuButton(CtrlHolder *p, const QPoint& size,const XwnSet& set,  QWidget *parent=0);
 	virtual ~MenuButton();
 
 	void create();

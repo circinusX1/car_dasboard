@@ -1,7 +1,8 @@
-Pname=@wifii
-Name=" "
-XRect=1
-Exec=firefox
-Icon=wifii.png
-~Xframe=0
-
+{
+Pname{&wifii}
+Name{" "}
+XRect{1}
+Exec{firefox}
+Icon{wifii.png}
+~Xframe{0}
+}

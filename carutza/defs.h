@@ -65,7 +65,6 @@ antico:     g_cigala@virgilio.it, ludmiloff@gmail.com
 #include <QDebug>
 #include <QProcess>
 #include <QDir>
-#include <QSettings>
 #include <QTabWidget>
 #include <QDirModel>
 #include <QTreeView>

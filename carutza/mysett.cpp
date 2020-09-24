@@ -30,17 +30,25 @@ Project:    CARUTZA
 #include "theapp.h"
 #include "mysett.h"
 #include "panel.h"
-#include "container.h"
 
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-MySett::MySett(const QString &fileName, Format format, int global):
-        QSettings(fileName, format),_killdelay(100)
+MySett::MySett(const QString &fileName, bool global):_killdelay(100)
 {
-    char pw[256]; ::getcwd(pw, 255);
+    char pw[256];
+    ::getcwd(pw, 255);
     _workdir = pw;
+
+    if(this->parse((const char*)fileName.toUtf8())==false)
+    {
+        return;
+    }
+
+
+    _curent = this->root();
     _setdir = _workdir+"/config/";
+
     _base=this->value("dashboard").toString();
     _fontpercent=this->value("font_percent").toInt();
     _killdelay=this->value("kill_delay").toInt();
@@ -50,153 +58,102 @@ MySett::MySett(const QString &fileName, Format format, int global):
         _desk = _base+"Desktop/";
         _images = _base+"icons/";
     }
-    _drect.setCoords(0,0,PA->desktop()->width(),PA->desktop()->height());
+    _drect.setX(PA->desktop()->width());
+    _drect.setY(PA->desktop()->height());
 
     //up to 8 panels
+    int posy = 0;
     for(int k=0;k<8;++k)
     {
         CfgPanel    pset;
         QString     pe("panel");
         pe += QString::number(k);
 
-        this->beginGroup(pe);
-            pset._position = this->value("position").toSize();
-            if(pset._position.width()>=0)            //is enabled
-            {
-                pset._name    = pe;
-                pset._icons   = this->value("icons").toSize();
-                pset._height  = this->value("height").toInt();
-                pset._position = this->value("position").toSize();
-                pset._align   = this->value("align").toInt();
+        if(false == this->beginGroup(pe))
+            continue;
+        pset._rect = this->value("position").toRect();
 
-                pset._notify  = this->value("notify").toBool();
-                pset._width   = this->value("width").toInt();
-                pset._arrange = this->value("arrange").toInt();
-                pset._spacing = this->value("spacing").toInt();
-                pset._bgimage = this->value("bgimage").toString();
-                pset._dir     = this->value("config").toString();
-                if(!pset._bgimage.isEmpty())
-                {
-                    if(pset._bgimage[0]=='/')
-                    {
-                        //absolute path
-                        QString img = pset._bgimage;
-                        pset._bgimage = _workdir + pset._bgimage;
-                    }
-                }
-                pset._dir     += "/";
-                pset._dir     += this->value("basedir").toString();
-                pset._dir     += "/";
-                _panels[pe]   = pset;
+        if(pset._rect.left()<0)
+            pset._rect.setLeft(0);
+        if(pset._rect.top()<0)
+            pset._rect.setTop(posy);
+        if(pset._rect.right()<0)
+            pset._rect.setWidth(this->_drect.y());
+        if(pset._rect.bottom()<0)
+            pset._rect.setHeight(this->_drect.y()-posy-1);
+
+        pset._name    = pe;
+        pset._icons   = this->value("icons").toPoint();
+
+        pset._align   = this->value("align").toInt();
+
+        pset._notify  = this->value("notify").toBool();
+        pset._arrange = this->value("arrange").toInt();
+        pset._spacing = this->value("spacing").toInt();
+        pset._bgimage = this->value("bgimage").toString();
+        pset._dir     = this->value("config").toString();
+        if(!pset._bgimage.isEmpty())
+        {
+            if(pset._bgimage[0]=='/')
+            {
+                //absolute path
+                QString img = pset._bgimage;
+                pset._bgimage = _workdir + pset._bgimage;
             }
+        }
+        pset._dir     += "/";
+        pset._dir     += this->value("basedir").toString();
+        pset._dir     += "/";
+        _panels[pe]   = pset;
+        posy += pset._rect.height();
         this->endGroup();
     }
-
-    //up to 8 containers
-    for(int k=0;k<8;++k)
-    {
-        CfgPanel   pset;
-        QString     pe("container");
-        pe += QString::number(k);
 
 /*
-        name=container0
-        height=96
-        align=1
-        position=@Size(0 64)
-        widget0=".overflow/left.control"
-        widget1=@launcher
-        widget2=".overflow/right.control"
-        widget2=".overflow/home.control"
-        widget0=".overflow/left.control"
-        widget1=@launcher
-        widget2=".overflow/right.control"
-        widget2=".overflow/home.control"
-*/
-
-        this->beginGroup(pe);
-            pset._position = this->value("position").toSize();
-            if(pset._position.width()>=0)            //is enabled
-            {
-                pset._height = this->value("height").toInt();
-                pset._position = this->value("position").toSize();
-                pset._align = this->value("align").toInt();
-                pset._name= pe;
-                pset._arrange= this->value("arrange").toInt();
-                pset._spacing= this->value("spacing").toInt();
-                pset._width= this->value("width").toInt();
-                pset._bgimage = this->value("bgimage").toString();
-
-                pset._dir     = this->value("config").toString();
-                if(!pset._bgimage.isEmpty())
-                {
-                    if(pset._bgimage[0]=='/')
-                    {
-                        //absolute path
-                        QString img = pset._bgimage;
-                        pset._bgimage = _workdir + pset._bgimage;
-                    }
-                }
-                pset._dir     += "/";
-                pset._dir     += this->value("basedir").toString();
-                pset._dir     += "/";
-
-                //up to 8 children
-                for(int c=0;c<8;++c)
-                {
-                    QString     pe("widget");
-                    pe += QString::number(c);
-
-                    pe = this->value(pe).toString();
-                    if(!pe.isEmpty())
-                        pset._kids.push_back(pe);
-                    else
-                        break;
-                }
-                _containers[pe] = pset;
-            }
-        this->endGroup();
-    }
     QString vn;
     _theme =  _images + "theme/" + value("theme").toString()+"/";    //=32
     this->beginGroup("apps");
-        QStringList keys = this->allKeys();
-        for(int k=0; k < keys.size(); ++k)
+    QStringList keys = this->allKeys();
+
+    for(int k=0; k < keys.size(); ++k)
+    {
+        qDebug() << keys.at(k);
+        QString val = this->value(keys.at(k)).toString();
+        if(val.contains(","))
         {
-            qDebug() << keys.at(k);
-            QString val = this->value(keys.at(k)).toString();
-            if(val.contains(","))
-            {
-                QStringList vals = val.split(",");
-                ShowHide    sh;
+            QStringList vals = val.split(",");
+            ShowHide    sh;
 
-                sh._pname = keys.at(k);
-                vn = vals.at(0);
+            sh._pname = keys.at(k);
+            vn = vals.at(0);
 
-                sh._show = vn.toInt();
-                vn = vals.at(1);
+            sh._show = vn.toInt();
+            vn = vals.at(1);
 
-                sh._hide = vn.toInt();
-                vn = vals.at(2);
+            sh._hide = vn.toInt();
+            vn = vals.at(2);
 
-                sh._timing = vn.toInt();
-                _showhide.push_back(sh);
-            }
+            sh._timing = vn.toInt();
+            _showhide.push_back(sh);
         }
+    }
     this->endGroup();
+*/
 
-    if(value("caption_height").toInt()==0)
-        this->setValue("caption_height",18);
+    //?    if(value("caption_height").toInt()==0)
+    //?        this->setValue("caption_height",18);
     _displays = this->value("displays").toInt();
-
     _display = this->value("display").toInt();
+
+    _ok=true;
 }
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
 void MySett::finalize()
 {
-	QColor _prev_color = QColor(value("last_highlight", QColor(0, 0, 255).name()).toString());
+    QColor _prev_color =
+            QColor(value("last_highlight").toString());
     PA->app_set_hilhight_color(_prev_color);
     PA->app_set_click_rule(value("minimize_dbl_click", false).toBool());
 }
@@ -273,8 +230,8 @@ int MySett::top_gap()const
     for(;it != _panels.end();++it)
     {
         const CfgPanel& p = (*it).second;
-        if(p._position.height() < this->_drect.height()/2) //pane;l is on top
-            tp+=p._height;
+        if(p._rect.bottom() < this->_drect.y()/2) //pane;l is on top
+            tp+=p._rect.height();
     }
     return tp;
 }
@@ -288,8 +245,8 @@ int MySett::bottom_gap()const
     for(;it != _panels.end();++it)
     {
         const CfgPanel& p = (*it).second;
-        if(p._position.height() > this->_drect.height()/2) //pane;l is on top
-            tp+=p._height+1;
+        if(p._rect.bottom() > this->_drect.y()/2) //pane;l is on top
+            tp+=p._rect.height();
     }
     return tp;
 }
@@ -307,60 +264,6 @@ void MySett::load_panels(std::vector<Panel*>& panels)
     }
 }
 
-/*--------------------------------------------------------------------------------------
-  -------------------------------------------------------------------------------------*/
-void MySett::load_containers(std::vector<Container*>& containers)
-{
-    std::map<QString, CfgPanel>::iterator it = _containers.begin();
-    for(;it != _containers.end();++it)
-    {
-        CfgPanel& pc = (*it).second;
-        Container* p = new Container(&pc,0);
-        containers.push_back(p);
-    }
-}
-
-/*--------------------------------------------------------------------------------------
-  -------------------------------------------------------------------------------------*/
-bool MySett::read_rect(QSettings& s, const QString& entry, QRect& xpos, bool ownd, int offset)
-{
-
-    MySett& conf = MySett::config();
-    xpos = s.value(entry).toRect();
-    if(xpos.width()<=0)
-    {
-        int temp = s.value(entry).toInt();
-        if(conf._displays==0) //no multiple displays
-            temp=0;
-
-        //CfgPanel     _notification;
-        //CfgPanel     _launcher;
-        //CfgPanel     _quickapps;
-
-        if(temp==0) //whole display
-        {
-            xpos.setCoords(0,
-                           ownd? 0 : conf.top_gap()-offset,
-                           conf.drect().width(),
-                           conf.drect().height()-(ownd? 0 : conf.bottom_gap()));
-        }
-        else if(temp==1) //upper side
-        {
-            xpos.setCoords(0,
-                           ownd? 0 : conf.top_gap(),
-                           conf.drect().width(),
-                           conf.drect().height()/2);
-        }
-        else if(temp==2) //lower side
-        {
-            xpos.setCoords(0,
-                           conf.drect().height()/2,
-                           conf.drect().width(),
-                           conf.drect().height()-(ownd? 0 : conf.bottom_gap()));
-        }
-    }
-    return xpos.width()>0;
-}
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
@@ -379,9 +282,10 @@ bool MySett::find_widget(const QString& name, XwnSet& outval)
         QString     sfile = fi.absoluteFilePath();
         QString     bn = fi.baseName();
         if(!fi.isDir() &&
-            (sfile.endsWith(".widget") || sfile.endsWith(".desktop") || sfile.endsWith(".desktopp")) )
+                (sfile.endsWith(".widget") || sfile.endsWith(".desktop") || sfile.endsWith(".desktopp")) )
         {
-            QSettings df(sfile, QSettings::NativeFormat, 0);
+            MySett    df(sfile);
+            if(!df.ok())continue;
             QString   pname = df.value("Pname").toString();
             if(!pname.isEmpty() && (pname == name || name.contains(pname)))
             {
@@ -393,9 +297,9 @@ bool MySett::find_widget(const QString& name, XwnSet& outval)
     }
     //load default rect
     outval._rect.setCoords(0,
-                   top_gap(),
-                   drect().width(),
-                   drect().height()-bottom_gap());
+                           top_gap(),
+                           drect().x(),
+                           drect().y()-bottom_gap());
 
     outval._rpos=0;
     return true;
@@ -405,7 +309,7 @@ bool MySett::find_widget(const QString& name, XwnSet& outval)
   -------------------------------------------------------------------------------------*/
 MySett& MySett::config(const QString* file)
 {
-    static MySett s(*file, QSettings::NativeFormat, 1);
+    static MySett s(*file,  1);
     return s;
 }
 
@@ -416,4 +320,46 @@ QString MySett::read_mangled(const char* entry)
     QString s = this->value(entry).toString();
     mangle(s);
     return s;
+}
+
+bool MySett::read_rect( MySett& conf,
+               const char* entry,
+               QRect& xpos,
+               bool ownd,
+               int offset)
+{
+    xpos = this->value(entry).toRect();
+    if(xpos.width()<=0)
+    {
+        int temp = value(entry).toInt();
+        if(conf._displays==0) //no multiple displays
+            temp=0;
+
+        //CfgPanel     _notification;
+        //CfgPanel     _launcher;
+        //CfgPanel     _quickapps;
+
+        if(temp==0) //whole display
+        {
+            xpos.setCoords(0,
+                           ownd? 0 : conf.top_gap()-offset,
+                           conf.drect().x(),
+                           conf.drect().y()-(ownd? 0 : conf.bottom_gap()));
+        }
+        else if(temp==1) //upper side
+        {
+            xpos.setCoords(0,
+                           ownd? 0 : conf.top_gap(),
+                           conf.drect().x(),
+                           conf.drect().y()/2);
+        }
+        else if(temp==2) //lower side
+        {
+            xpos.setCoords(0,
+                           conf.drect().y()/2,
+                           conf.drect().x(),
+                           conf.drect().y()-(ownd? 0 : conf.bottom_gap()));
+        }
+    }
+    return xpos.width()>0;
 }
