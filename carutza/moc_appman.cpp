@@ -30,19 +30,19 @@ static const uint qt_meta_data_Appman[] = {
        3,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
-      11,    8,    7,    7, 0x05,
-      39,    7,    7,    7, 0x05,
-      60,    7,    7,    7, 0x05,
+       7,   35,   38,   38, 0x05,
+      39,   38,   38,   38, 0x05,
+      60,   38,   38,   38, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      78,    7,    7,    7, 0x0a,
+      78,   38,   38,   38, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_Appman[] = {
-    "Appman\0\0,,\0sig_moving(Appman*,int,int)\0"
-    "sig_clicked(Appman*)\0sig_scrolled(int)\0"
+    "Appman\0sig_moving(Appman*,int,int)\0"
+    ",,\0\0sig_clicked(Appman*)\0sig_scrolled(int)\0"
     "slot_refresh()\0"
 };
 

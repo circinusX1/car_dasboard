@@ -30,13 +30,13 @@ static const uint qt_meta_data_Desktop[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-       9,    8,    8,    8, 0x0a,
+       8,   27,   27,   27, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_Desktop[] = {
-    "Desktop\0\0run_menu(QAction*)\0"
+    "Desktop\0run_menu(QAction*)\0\0"
 };
 
 void Desktop::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -56,7 +56,7 @@ const QMetaObjectExtraData Desktop::staticMetaObjectExtraData = {
 };
 
 const QMetaObject Desktop::staticMetaObject = {
-    { &QWidget2::staticMetaObject, qt_meta_stringdata_Desktop,
+    { &CtrlHolder::staticMetaObject, qt_meta_stringdata_Desktop,
       qt_meta_data_Desktop, &staticMetaObjectExtraData }
 };
 
@@ -74,12 +74,12 @@ void *Desktop::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_Desktop))
         return static_cast<void*>(const_cast< Desktop*>(this));
-    return QWidget2::qt_metacast(_clname);
+    return CtrlHolder::qt_metacast(_clname);
 }
 
 int Desktop::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget2::qt_metacall(_c, _id, _a);
+    _id = CtrlHolder::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {

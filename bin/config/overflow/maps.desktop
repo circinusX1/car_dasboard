@@ -1,0 +1,9 @@
+{
+Pname{navit}
+Name{" "}
+Exec{navit}
+Xframe{false}
+Icon{nav.png}
+}
+
+

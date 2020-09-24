@@ -30,26 +30,25 @@ static const uint qt_meta_data_TheApp[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-       8,    7,    7,    7, 0x0a,
-      23,    7,    7,    7, 0x0a,
-      44,    7,    7,    7, 0x0a,
-      63,    7,    7,    7, 0x0a,
-      84,    7,    7,    7, 0x0a,
-      99,    7,    7,    7, 0x0a,
-     120,    7,    7,    7, 0x0a,
-     144,  140,    7,    7, 0x0a,
-     173,    7,    7,    7, 0x0a,
+       7,   22,   22,   22, 0x0a,
+      23,   22,   22,   22, 0x0a,
+      44,   22,   22,   22, 0x0a,
+      63,   22,   22,   22, 0x0a,
+      84,   22,   22,   22, 0x0a,
+      99,   22,   22,   22, 0x0a,
+     120,   22,   22,   22, 0x0a,
+     140,  169,   22,   22, 0x0a,
+     173,   22,   22,   22, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_TheApp[] = {
-    "TheApp\0\0slot_alt_tab()\0slot_focus_topmost()\0"
+    "TheApp\0slot_alt_tab()\0\0slot_focus_topmost()\0"
     "slot_namage_apps()\0slot_unmanage_apps()\0"
     "slot_refresh()\0slot_normal_cursor()\0"
-    "slot_bring_to_top()\0sym\0"
-    "slot_redirect_to_lancer(int)\0"
-    "slot_run_app()\0"
+    "slot_bring_to_top()\0slot_redirect_to_lancer(int)\0"
+    "sym\0slot_run_app()\0"
 };
 
 void TheApp::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)

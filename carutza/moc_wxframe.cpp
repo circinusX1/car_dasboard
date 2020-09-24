@@ -30,19 +30,19 @@ static const uint qt_meta_data_FrmWinBorder[] = {
        6,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
-      14,   13,   13,   13, 0x05,
-      43,   13,   13,   13, 0x05,
-      70,   13,   13,   13, 0x05,
-      85,   13,   13,   13, 0x05,
-     100,   13,   13,   13, 0x05,
-     115,   13,   13,   13, 0x05,
+      13,   42,   42,   42, 0x05,
+      43,   42,   42,   42, 0x05,
+      70,   42,   42,   42, 0x05,
+      85,   42,   42,   42, 0x05,
+     100,   42,   42,   42, 0x05,
+     115,   42,   42,   42, 0x05,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_FrmWinBorder[] = {
-    "FrmWinBorder\0\0sig_mouse_move(QMouseEvent*)\0"
-    "sig_mlbutton(QMouseEvent*)\0sig_mlbutton()\0"
+    "FrmWinBorder\0sig_mouse_move(QMouseEvent*)\0"
+    "\0sig_mlbutton(QMouseEvent*)\0sig_mlbutton()\0"
     "sig_mrbutton()\0sig_mmbutton()\0"
     "sig_mrelease()\0"
 };
@@ -154,20 +154,20 @@ static const uint qt_meta_data_FrmSysButs[] = {
        3,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
-      12,   11,   11,   11, 0x05,
-      31,   11,   11,   11, 0x05,
-      50,   11,   11,   11, 0x05,
+      11,   30,   30,   30, 0x05,
+      31,   30,   30,   30, 0x05,
+      50,   30,   30,   30, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      71,   69,   11,   11, 0x0a,
+      69,   84,   30,   30, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_FrmSysButs[] = {
-    "FrmSysButs\0\0sig_lbutton_down()\0"
+    "FrmSysButs\0sig_lbutton_down()\0\0"
     "sig_rbutton_down()\0sig_mbutton_down()\0"
-    "s\0set_state(int)\0"
+    "set_state(int)\0s\0"
 };
 
 void FrmSysButs::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -255,18 +255,18 @@ static const uint qt_meta_data_XFrameBar[] = {
        6,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
-      11,   10,   10,   10, 0x05,
-      31,   10,   10,   10, 0x05,
-      60,   10,   10,   10, 0x05,
-      91,   10,   10,   10, 0x05,
-     110,   10,   10,   10, 0x05,
-     129,   10,   10,   10, 0x05,
+      10,   30,   30,   30, 0x05,
+      31,   30,   30,   30, 0x05,
+      60,   30,   30,   30, 0x05,
+      91,   30,   30,   30, 0x05,
+     110,   30,   30,   30, 0x05,
+     129,   30,   30,   30, 0x05,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_XFrameBar[] = {
-    "XFrameBar\0\0sig_mouse_release()\0"
+    "XFrameBar\0sig_mouse_release()\0\0"
     "sig_mouse_move(QMouseEvent*)\0"
     "sig_lbutton_down(QMouseEvent*)\0"
     "sig_rbutton_down()\0sig_mbutton_down()\0"

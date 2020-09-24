@@ -784,6 +784,6 @@ void XClient::slot_show_top()
 {
     PA->appman()->set_active_xwin(this,false);
     bring_to_top();
-    this->move(0,250);
+    this->move(0,240);
 }
 
