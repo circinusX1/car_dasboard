@@ -116,7 +116,6 @@ OTHER_FILES += \
     ../../../../.octopus/Desktop/.overflow/2right.control \
     ../../../../.octopus/Desktop/.overflow/1left.control \
     ../../../../.octopus/Desktop/.overflow/2right.control~ \
-    ../bin/config/carutza.conf \
     ../bin/Desktop/.bottompanel/1x.signal \
     ../bin/Desktop/.bottompanel/4volume.desktop \
     ../bin/Desktop/.bottompanel/3controls.desktop \
@@ -170,6 +169,7 @@ DISTFILES += \
     ../bin/config/notifications/6user.applet \
     ../bin/config/op_ethd.conf \
     ../bin/config/overflow/1left.control \
+    ../bin/config/overflow/1nav.desktop \
     ../bin/config/overflow/2right.control \
     ../bin/config/overflow/3home.desktop \
     ../bin/config/overflow/camera.desktopp \

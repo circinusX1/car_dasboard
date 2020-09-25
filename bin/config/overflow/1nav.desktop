@@ -1,7 +1,7 @@
 {
 Pname{navit}
 Name{" "}
-Exec{/home/linaro/navit/startnav.sh}
+Exec{navit}
 Xrect{0}
 Icon{nav.png}
 }

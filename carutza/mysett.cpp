@@ -230,7 +230,7 @@ int MySett::top_gap()const
     for(;it != _panels.end();++it)
     {
         const CfgPanel& p = (*it).second;
-        if(p._rect.bottom() < this->_drect.y()/2) //pane;l is on top
+        if(p._rect.bottom() < this->_drect.y()/2 && p._rect.height()>0) //pane;l is on top
             tp+=p._rect.height();
     }
     return tp;
@@ -328,37 +328,39 @@ bool MySett::read_rect( MySett& conf,
                bool ownd,
                int offset)
 {
-    xpos = this->value(entry).toRect();
+
+    xpos = conf.value("rect").toRect();
     if(xpos.width()<=0)
     {
-        int temp = value(entry).toInt();
-        if(conf._displays==0) //no multiple displays
+        int temp = conf.value(entry).toInt();
+        if(_displays==0) //no multiple displays
             temp=0;
 
         //CfgPanel     _notification;
         //CfgPanel     _launcher;
         //CfgPanel     _quickapps;
 
-        if(temp==0) //whole display
+        int tp=CFG(top_gap());
+        if(temp==0 && tp) //whole display
         {
             xpos.setCoords(0,
-                           ownd? 0 : conf.top_gap()-offset,
-                           conf.drect().x(),
-                           conf.drect().y()-(ownd? 0 : conf.bottom_gap()));
+                           ownd? 0 : CFG(top_gap())-offset,
+                           CFG(drect()).x(),
+                           CFG(drect()).y()-(ownd? 0 : CFG(bottom_gap())));
         }
         else if(temp==1) //upper side
         {
             xpos.setCoords(0,
-                           ownd? 0 : conf.top_gap(),
-                           conf.drect().x(),
-                           conf.drect().y()/2);
+                           ownd? 0 : CFG(top_gap()),
+                           CFG(drect()).x(),
+                           CFG(drect()).y()/2);
         }
         else if(temp==2) //lower side
         {
             xpos.setCoords(0,
-                           conf.drect().y()/2,
-                           conf.drect().x(),
-                           conf.drect().y()-(ownd? 0 : conf.bottom_gap()));
+                           CFG(drect()).y()/2,
+                           CFG(drect()).x(),
+                           CFG(drect()).y()-(ownd? 0 : CFG(bottom_gap())));
         }
     }
     return xpos.width()>0;

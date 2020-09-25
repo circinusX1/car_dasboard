@@ -1,5 +1,5 @@
 {
-    display{0}
+    display{1}
     zorder{0}
     displays{2}
     dashboard{$PWD/}
@@ -9,9 +9,9 @@
     top_sysmenu{140,64}
     backfollow{1}
     theme{default}
-    ~start{$PWD/navit/startnav.sh}
+    ~start{navit}
     ~start{"$PWD/op_clock_applet &"}
-    start{"xfce4-panel"}
+    ~start{"xfce4-panel"}
     main_menu{1}
     dock_pix{$THEME/dockbar.png}
     dock_factor{1}
@@ -58,17 +58,6 @@
         config{config}
         basedir{"overflow"}
         layout{0}
-    }
-
-    panel2{
-        position{0,NEXT,MAX,600}
-        basedir{"desktop"}
-        icons{92,72}
-        height{600}
-        align{4}
-        spacing{0}
-        config{config}
-        layout{2}
     }
 
     panel3{

@@ -125,7 +125,7 @@ void XClient::init()
     base_w  =   _set._rect.width();
     base_h  =   _set._rect.height();
     _xwclass = x11atoms::get_wxclass(_x_wid);
-    cond_if(_set._frame==0, _xwclass=x11atoms::Splash;)
+    cond_if(_set._frame==false, _xwclass=x11atoms::Splash;)
     if (_xwclass == x11atoms::Splash)
     {
         bx = by = 0;
@@ -137,17 +137,15 @@ void XClient::init()
         by = n_ph;
     }
 
-
-
     n_px = _set._rect.left();
     n_py = _set._rect.top();
     n_pw = _set._rect.width();
     n_ph = _set._rect.height();
 
     XMoveResizeWindow(DPY(), _x_wid, bx, by, base_w, base_h);
-    usleep(10000);
+    usleep(0xffff);
     move(n_px, n_py);
-    usleep(10000);
+    usleep(0xffff);
     resize(n_pw, n_ph);
     make_frame();
     PA->appman()->set_active_xwin(this, true);
@@ -161,7 +159,7 @@ void XClient::init()
     _maximized = false;
     _xw_state = X11_NormalState;
     set_font();
-    QTimer::singleShot(2000, this, SLOT(slot_show_top()));
+    QTimer::singleShot(128, this, SLOT(slot_show_top()));
 }
 
 /*--------------------------------------------------------------------------------------
@@ -784,6 +782,6 @@ void XClient::slot_show_top()
 {
     PA->appman()->set_active_xwin(this,false);
     bring_to_top();
-    this->move(0,240);
+    this->move(_set._rect.left(),_set._rect.top()-2);
 }
 
