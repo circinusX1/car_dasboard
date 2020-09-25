@@ -1,6 +1,6 @@
 {
 pname{cheese}
-Name{" "}
+Name{"cam"}
 Exec{"cheese"}
 Xrect{0}
 icon{camera}

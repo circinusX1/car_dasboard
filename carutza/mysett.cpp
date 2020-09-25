@@ -40,7 +40,7 @@ MySett::MySett(const QString &fileName, bool global):_killdelay(100)
     ::getcwd(pw, 255);
     _workdir = pw;
 
-    if(this->parse((const char*)fileName.toUtf8())==false)
+    if(this->parse((const char*)fileName.toUtf8())==nullptr)
     {
         return;
     }
@@ -75,12 +75,26 @@ MySett::MySett(const QString &fileName, bool global):_killdelay(100)
 
         if(pset._rect.left()<0)
             pset._rect.setLeft(0);
-        if(pset._rect.top()<0)
-            pset._rect.setTop(posy);
+        int tp = pset._rect.top();
+        if(tp<0){
+            if(tp==-3){
+                pset._rect.moveTo(0,drect().y()-pset._rect.height());
+            }
+            else{
+                pset._rect.moveTo(0,posy);
+            }
+        }
         if(pset._rect.right()<0)
             pset._rect.setWidth(this->_drect.y());
-        if(pset._rect.bottom()<0)
-            pset._rect.setHeight(this->_drect.y()-posy-1);
+        if(pset._rect.bottom()<0){
+            pset._rect.setHeight(this->_drect.y()-posy);
+        }
+
+        int x,y,w,h;
+        x=pset._rect.left();
+        y=pset._rect.top();
+        w=pset._rect.width();
+        h=pset._rect.height();
 
         pset._name    = pe;
         pset._icons   = this->value("icons").toPoint();
@@ -273,7 +287,7 @@ bool MySett::find_widget(const QString& name, XwnSet& outval)
     {
         return false;
     }
-    QDir            dir(_desk);
+    QDir            dir("./");
     QFileInfoList   files = dir.entryInfoList();
     foreach(const QFileInfo &fi, files)
     {

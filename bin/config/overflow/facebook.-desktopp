@@ -1,6 +1,0 @@
-Pname=firefox
-Name=" "
-Exec="firefox http://www.facebook.com"
-Xrect=0
-Icon=facebook
-

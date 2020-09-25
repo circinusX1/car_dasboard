@@ -1,6 +1,6 @@
 {
 Pname{navit}
-Name{" "}
+Name{"mavit"}
 Exec{navit}
 Xrect{0}
 Icon{nav.png}

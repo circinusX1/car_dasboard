@@ -1,7 +1,8 @@
-Pname=firefox
-Name=" "
-Exec="firefox http://www.twitter.com/"
-Xrect=0
-Icon=twitter
+Pname=firefox;
+Name=twit;
+Exec="firefox http://www.twitter.com/";
+Xrect=0;
+Icon=twitter;
+
 
 

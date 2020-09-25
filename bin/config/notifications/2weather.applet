@@ -1,6 +1,6 @@
 {
 Pname{&weather}
-Name{" "}
+Name{weather}
 XRect{2}
 Isize{64,30}
 Icon{weather}

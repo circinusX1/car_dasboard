@@ -1,0 +1,9 @@
+{
+Pname{climate}
+Name{"env"}
+Exec{climate.sh}
+Xrect{0}
+Icon{octopuse_bottom_nav.png}
+align{1}
+}
+

@@ -1,6 +1,6 @@
 {
 pname{firefox}
-Name{" "}
+Name{link"}
 Exec{"firefox http://www.linkedin.com/"}
 Xrect{0}
 icon{linedin}

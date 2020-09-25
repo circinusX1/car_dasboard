@@ -1,5 +1,5 @@
-Pname=blueman-manager
-Name="Bluetooth Settings"
-Xrect=1
-Icon=bt
+Pname=blueman-manager;
+Name="Bluetooth Settings";
+Xrect=1;
+Icon=bt;
 

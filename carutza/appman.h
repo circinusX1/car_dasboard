@@ -62,8 +62,9 @@ signals:
 
 protected:
     virtual void _draw_text();
-private:
+public:
     XClient*            _pactive;
+private:
     XClient*            _sibling;
     XClient*            _secondinst;
     XClient*            _ptokill;

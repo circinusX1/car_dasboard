@@ -1,6 +1,6 @@
-Pname=vncviewer
-Xrect=0
-Icon=vnc
-Name="Vnc"
-Xframe=0
+Pname=vncviewer;
+Xrect=0;
+Icon=vnc;
+Name="Vnc";
+Xframe=0;
 

@@ -1,7 +1,7 @@
-Pname="xfce4-panel"
-Xrect=@Rect(0 0 768 30)
-Icon=
-Name=" "
-Xframe=0
-Noclose=1
+Pname="xfce4-panel";
+Xrect{0, 0, 768, 30}
+Icon=" ";
+Name="xfce";
+Xframe=0;
+Noclose=1;
 

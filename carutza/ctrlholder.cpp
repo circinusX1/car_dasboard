@@ -80,9 +80,9 @@ void CtrlHolder::_config_ui()
 void  CtrlHolder::_layout_it()
 {
     if(_pcfg->_layout==0){
-        _layout = new QHBoxLayout(nullptr,0,_pcfg->_spacing);
+        _layout = new QHBoxLayout(nullptr,0,0);
         ((QHBoxLayout*)_layout)->setSpacing(_pcfg->_spacing);
-        ((QHBoxLayout*)_layout)->setDirection(QBoxLayout::Direction(_pcfg->_align-1));
+        ((QHBoxLayout*)_layout)->setDirection(QBoxLayout::LeftToRight);
     }
     else if(_pcfg->_layout==1)
         _layout = new QVBoxLayout(nullptr,0,_pcfg->_spacing);

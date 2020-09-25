@@ -1,6 +1,6 @@
 {
 Pname{banshee}
-Name{" "}
+Name{"music"}
 Exec{"banshee"}
 Xrect{0}
 Icon{mediaplayer}

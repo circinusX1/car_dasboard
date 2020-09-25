@@ -1,0 +1,5 @@
+Pname=firefox;
+Name=link;
+Exec="firefox http://www.linkedin.com/";
+Xrect=0;
+Icon=linedin;

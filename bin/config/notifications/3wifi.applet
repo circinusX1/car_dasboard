@@ -1,6 +1,6 @@
 {
 Pname{&wifii}
-Name{" "}
+Name{wifi}
 XRect{1}
 Exec{firefox}
 Icon{wifii.png}

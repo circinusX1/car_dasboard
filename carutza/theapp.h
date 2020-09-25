@@ -69,6 +69,10 @@ public:
 	TheApp(int &argc, char **argv);
 	~TheApp();
 
+
+	bool notify(QObject *, QEvent *);
+
+
     Appman* appman(){return _papp_man;}
     void set_appman(Appman* papp_man){ _papp_man = papp_man;};
     void init(MySett& s);
@@ -157,7 +161,9 @@ private:
     bool                _bshow;
     DbusIpc             _ipc;
     const XwnSet*       _pset_torun; // slot mismatch
+
 public:
+    bool                _mdown=false;
     static Desktop*     __Dsk();
     static QApplication::EventFilter _default_x11;
 };

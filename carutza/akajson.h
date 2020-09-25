@@ -13,17 +13,18 @@
 #include <utility>
 #include <sstream>
 #include <fstream>
-#define OOO std::cout
+#include <QDebug>
+#define OOO qDebug()
 
 
-class Kisstu
+class Cbdler
 {
 public:
 
     class Node
     {
     public:
-        friend class Kisstu;
+        friend class Cbdler;
 
     protected:
         enum E_TYPE{eNULL,eNODE,eLEAF};
@@ -34,8 +35,10 @@ public:
             _parent=nullptr;
         }
         ~Node(){
+            _name.clear();
             for(const auto& a : _values)
                 delete a;
+            _values.clear();
         }
         const std::string& nv()const{return _name;};
         bool ok()const{return _type!=eNULL;}
@@ -57,7 +60,7 @@ public:
             return _root();
         }
 
-        void  add( Node* pn){
+        void  add(Node* pn){
             this->_type = Node::eNODE;
             this->_values.push_back(pn);
         }
@@ -84,6 +87,8 @@ public:
             static Node Dummy;
             return Dummy;
         }
+
+        bool is_node()const{return _type==Node::eNODE;}
 protected:
         const Node* _get_ref(const Node* pn, const std::string& v, std::string& idx)const
         {
@@ -134,7 +139,7 @@ protected:
         }
 
         const Node& node(size_t index=0)const{
-            static Node empty(Node::eLEAF, "~error~");
+            static Node empty(Node::eNULL,"~error~");
             if(_values.size() && _values.size()>=index)
                 return *_values[index];
             return empty;
@@ -145,6 +150,7 @@ public:
             std::string ss = s;
             return _at(ss);
         }
+
         const std::string value(size_t index=0)const{
             static std::string empty="~error~";
             if(_values.size() )
@@ -166,7 +172,7 @@ public:
 
                 // @../../rect/sss/sss[2],@/x/sdf/size
                 pn = _get_ref(pn, v, idx);
-                if(pn)
+                if(pn!=nullptr)
                 {
                     size_t dx = !idx.empty() ? std::stod(idx) : 0;
                     if(pn->_values.size()>dx)
@@ -179,7 +185,8 @@ public:
         size_t count()const{
             return _values.size();
         }
-protected:
+
+private:
         const Node* _root()const {
             const Node* pn = this;
             while(pn->_parent)
@@ -193,7 +200,21 @@ protected:
                     return a;
                 }
             }
-            return nullptr;
+            static Node empty;
+            return &empty;
+        }
+
+        void _del_node(Node* pn)
+        {
+            std::vector<Node*>::iterator i = _values.begin();
+            for(;i!=_values.end();++i){
+                if((*i) == pn)
+                {
+                    delete pn;
+                    _values.erase(i);
+                    break;
+                }
+            }
         }
 
     private:
@@ -204,19 +225,21 @@ protected:
     };
 
 public:
-    Kisstu():_pnode(nullptr)
+    Cbdler():_pnode(nullptr)
     {
 
     }
     // looup todo
-    const Kisstu::Node& operator[](const char* key)const
+    const Cbdler::Node& operator[](const char* key)const
     {
         return _pnode->operator[](key);
     }
-    bool parse(const char* fname)
+    Node* parse(const char* fname)
     {
-        _parse(fname);
-        return _pnode!=nullptr;
+        if(_pnode)
+            delete _pnode;
+        _pnode = nullptr;
+        return _parse(fname);
     }
 
     // construct  a tree
@@ -231,10 +254,13 @@ public:
     Node* root()const {return _pnode;}
 
 private:
-    void _parse(const char* fname)
+    Node* _parse(const char* fname)
     {
-        char p     = 0;
-        int line   =1;
+        char  p    = 0;
+        int   line = 1;
+        int   oc   = 0;
+        int   eq   = 0;
+        int   els  = 0;
         bool  longstr = false;
         bool  escaping = false;
         Node* paka = nullptr;
@@ -247,8 +273,18 @@ private:
                 ++line;
                 char prev = 0;
                 std::istringstream iss(_line);
-                if(_line.empty() || _line[0]=='#')
-                    continue;
+                if(!escaping && !longstr){
+                    if(_line.empty() || _line[0]=='#')
+                        continue;
+                    if(eq){
+                        qDebug()<<" line:" << line << "no ; at EOL in: "<< fname <<" \n";
+                        throw 2;
+                    }
+                }
+                if(longstr){
+                    _line+="\n";
+                }
+
                 for(const auto f : _line)
                 {
                     if(f=='#'){ _line.empty(); break; }
@@ -278,11 +314,29 @@ private:
                         else
                             longstr = !longstr;
                         break;
+                    case ':':
+                    case '=':
+                        if(longstr){
+                             _string+=f;
+                            escaping=false;
+                            break;
+                        }
+                        eq=true;
                     case '{':
                         if(escaping){
                              _string+=f;
                             escaping=false;
                             break;
+                        }
+                        // doc has no root, make one and link it to curent first one
+                        if(els==1 && paka==nullptr)
+                        {
+                            Node* root   = new Node(Node::eNODE,"");
+                            Node* curent = _pnode;
+                            root->add(curent);
+                            curent->_parent = root;
+                            _pnode = root;
+                            paka = root;
                         }
                         parent = paka;
                         paka = _new();
@@ -291,8 +345,11 @@ private:
                         _string.clear();
                         if(paka!=parent && parent)
                             parent->_values.push_back(paka);
+                        ++oc;
                         break;
                     case '}':
+                    case ';':
+                        eq=false;
                         if(escaping){
                              _string+=f;
                             escaping=false;
@@ -303,9 +360,42 @@ private:
                         }
                         if(!_string.empty())
                         {
-                            paka->store_it(_string);
+                            if(!paka->_name.empty())
+                            {
+                                if(paka->_name=="%include")
+                                {
+                                    Cbdler sub;
+                                    Node* pn = sub.parse(_string.c_str());
+                                    if(pn)
+                                    {
+                                        if(_pnode==nullptr)
+                                        {
+                                            _pnode = pn;
+                                        }
+                                        else {
+                                            Node* prent = paka->_parent ? paka->_parent : _pnode;
+                                            prent->_del_node(paka);
+                                            pn->_parent = prent;
+                                            prent->add(pn);
+                                        }
+                                    }
+                                    else {
+                                        std::string subfn = _string;
+                                        _string="~failed to load ";
+                                        _string+=subfn;
+                                        paka->store_it(_string);
+                                    }
+                                    _wipe();
+                                }
+                                else
+                                {
+                                    paka->store_it(_string);
+                                }
+                            }
                         }
                         paka = paka->_parent;
+                        ++els;
+                        --oc;
                         break;
                     case ',':
                         if(escaping){
@@ -321,8 +411,14 @@ private:
                     }
                 }
             }
-
+        }else {
+            qDebug()<<"error open " << fname << "\n";
         }
+        if(oc || _pnode==nullptr){
+            qDebug()<<"document: "<<fname <<" malformated:";
+            throw(-1);
+        }
+        return _pnode;
     }
 
     Node* _new()
@@ -347,21 +443,21 @@ public:
     void print(const Node* p, int depth)
     {
         ++depth;
-        //OOO << "\n";
-        for(int i=0;i<depth;i++) OOO<<" ";
-
-        OOO  << p->_name.c_str() << "\n";
+        OOO << "\n";
+        for(int i=0;i<depth;i++) OOO<<"    ";
+        OOO  << p->_name.c_str();
         if(p->_values.size())
         {
-            //OOO << "\n";
-            for(int i=0;i<depth;i++) OOO<<" ";
+            OOO << "\n";
+            for(int i=0;i<depth;i++) OOO<<"    ";
             OOO << "{\n";
+
             for(const auto& a : p->_values)
             {
                 print(a,depth);
             }
-            //OOO << "\n";
-            for(int i=0;i<depth;i++) OOO<<" ";
+            OOO << "\n";
+            for(int i=0;i<depth;i++) OOO<<"    ";
             OOO << "}\n";
         }
         --depth;
@@ -376,7 +472,6 @@ private:
     bool                    _toking=false;
     bool                    _refon=false;
 };
-
 
 
 

@@ -60,10 +60,10 @@
         layout{0}
     }
 
-    panel3{
+    panel2{
         basedir{"bottompanel"}
-        position{0,NEXT,MAX,72}
-        icons{92,72}
+        position{0,BOTTOM,MAX,72}
+        icons{MAX,MAX}
         height{72}
         width{720}
         align{4}

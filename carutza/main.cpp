@@ -69,7 +69,7 @@ int main(int argc, char **argv)
                  ButtonPressMask | ButtonReleaseMask |
                  KeymapStateMask | ButtonMotionMask |
                  PointerMotionMask | EnterWindowMask |
-                 LeaveWindowMask | FocusChangeMask |
+                 LeaveWindowMask | FocusChangeMask | Button1MotionMask|PointerMotionMask|
                  ExposureMask | StructureNotifyMask |
                  SubstructureRedirectMask | SubstructureNotifyMask);
 	XClearWindow(DPY(), ROOT_XWIN());

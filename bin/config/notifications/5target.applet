@@ -1,6 +1,7 @@
-Pname=&target
-Name=" "
-XRect=1
-Icon=target.png
-Xframe=0
+Pname=&target;
+Name=target;
+XRect=1;
+Icon=target.png;
+Xframe=0;
+
 

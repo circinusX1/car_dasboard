@@ -131,33 +131,21 @@ DISTFILES += \
     ../bin/Desktop/2media.desktop \
     ../bin/Desktop/3phone.desktop \
     ../bin/Desktop/4rearview.desktop \
-    ../bin/Desktop/4rearview.desktop-disabled \
-    ../bin/Desktop/4rearview.~desktop \
     ../bin/Desktop/audacious.widget \
     ../bin/Desktop/bt.widget \
     ../bin/Desktop/calc.widget \
     ../bin/Desktop/firefox.widget \
-    ../bin/Desktop/firefox.widget.save \
-    ../bin/Desktop/ioc.widget \
     ../bin/Desktop/mplayer.widget \
-    ../bin/Desktop/op_pview.widget \
     ../bin/Desktop/vnc.widget \
-    ../bin/Desktop/vnc.widget.txt \
     ../bin/Desktop/volume.widget \
     ../bin/Desktop/xfce.widget \
-    ../bin/config/bottompanel/1x.signal \
-    ../bin/config/bottompanel/2climate.desktop \
-    ../bin/config/bottompanel/3controls.desktop \
-    ../bin/config/bottompanel/4volume.desktop \
+    ../bin/config/bottompanel/0climate.desktop \
     ../bin/config/carutza.kiss \
     ../bin/config/desktop/1left.control \
     ../bin/config/desktop/2right.control \
     ../bin/config/desktop/camera.desktopp \
     ../bin/config/desktop/desktop.conf \
-    ../bin/config/desktop/face.-desktopp \
-    ../bin/config/desktop/facebook.-desktopp \
     ../bin/config/desktop/linedin.desktopp \
-    ../bin/config/desktop/pandora.~desktop \
     ../bin/config/desktop/twiter.desktopp \
     ../bin/config/desktop/xm.desktop \
     ../bin/config/notifications/1clock.applet \
@@ -172,17 +160,19 @@ DISTFILES += \
     ../bin/config/overflow/1nav.desktop \
     ../bin/config/overflow/2right.control \
     ../bin/config/overflow/3home.desktop \
+    ../bin/config/overflow/camera.desktop \
     ../bin/config/overflow/camera.desktopp \
     ../bin/config/overflow/desktop.conf \
-    ../bin/config/overflow/face.-desktopp \
-    ../bin/config/overflow/facebook.-desktopp \
+    ../bin/config/overflow/home.control \
     ../bin/config/overflow/linedin.desktopp \
+    ../bin/config/overflow/maps.desktop \
     ../bin/config/overflow/music.desktop \
+    ../bin/config/overflow/pandora.desktop \
     ../bin/config/overflow/pandora.desktopp \
-    ../bin/config/overflow/pandora.~desktop \
     ../bin/config/overflow/pin.desktopp \
     ../bin/config/overflow/rssnews.desktopp \
     ../bin/config/overflow/twiter .~desktopp \
+    ../bin/config/overflow/twiter.desktopp \
     ../bin/config/overflow/xm.desktop
 
 

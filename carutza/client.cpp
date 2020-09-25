@@ -474,10 +474,13 @@ pid_t XClient::get_proc_uid()
   -------------------------------------------------------------------------------------*/
 void XClient::move_out(const QPoint& steps)
 {
+    /*
     XWindowAttributes xwa;
     XGetWindowAttributes(QX11Info::DPY(), _x_wid, &xwa);
     xwa.y=steps.y();
     XMoveWindow(DPY(),_x_wid,xwa.x,xwa.y);
+    */
+
 }
 
 

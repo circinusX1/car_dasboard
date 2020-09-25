@@ -1,9 +1,0 @@
-{
-Pname{volume}
-Name{" "}
-Run{volume.sh}
-Xrect{0}
-Icon{volume.png}
-align{2}
-Isize{264,72}
-}

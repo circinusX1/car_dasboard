@@ -1,6 +1,6 @@
 {
 Pname{blueman-manager}
-Name{" "}
+Name{bt}
 Icon{bbt.png}
 Exec{blueman-manager}
 }

@@ -43,7 +43,7 @@ QApplication::EventFilter TheApp::_default_x11=0; //anyway.. is 0 by stc++
 
 //-----------------------------------------------------------------------------
 TheApp::TheApp(int &argc, char **argv) :
-                QApplication(argc, argv),_papp_man(0),_ignorekey(false)
+    QApplication(argc, argv),_papp_man(0),_ignorekey(false)
 {
     TheApp::PAPP=this;
 }
@@ -157,10 +157,10 @@ void TheApp::wm_minimize_all()
             pxc->slot_minimize_now();
     }
     _papp_man->set_active_xwin(NULL, false);
-	::XUngrabKeyboard(DPY(), CurrentTime);
-	::XGrabKeyboard(DPY(), ROOT_XWIN(), TRUE, GrabModeAsync,
+    ::XUngrabKeyboard(DPY(), CurrentTime);
+    ::XGrabKeyboard(DPY(), ROOT_XWIN(), TRUE, GrabModeAsync,
                     GrabModeAsync, CurrentTime);
-	_wm_wins_state = PS_NORMAL;
+    _wm_wins_state = PS_NORMAL;
 }
 
 //-----------------------------------------------------------------------------
@@ -173,9 +173,9 @@ void TheApp::wm_show_all()
 //-----------------------------------------------------------------------------
 void TheApp::wm_dock_icon_removed(XClient *pxc)
 {
-    XRaiseWindow(DPY(), pxc->winId());
+	XRaiseWindow(DPY(), pxc->winId());
 	restack(pxc);
-    _papp_man->set_active_xwin(pxc, false);
+	_papp_man->set_active_xwin(pxc, false);
 	pxc->set_subwin_focus(0, CurrentTime);
 }
 
@@ -186,7 +186,7 @@ void TheApp::slot_namage_apps()
 	Window              c_win, w1, w2, *wins;
 	uint                nwins, cwin;
 	XWindowAttributes   attr;
-    XClient*            pxc;
+	XClient*            pxc;
 
 	if (::XQueryTree(DPY(), ROOT_XWIN(), &w1, &w2, &wins, &nwins) == 0 || ! nwins)
 	{
@@ -199,16 +199,16 @@ void TheApp::slot_namage_apps()
 		if (is_dash_widget(c_win))
 		{
 			continue;
-        }
+		}
 		::XGetWindowAttributes(DPY(), c_win, &attr);
 
 		if ((pxc = _x_wins.value(c_win)) != NULL)
 		{
-            pxc->slot_map_win();
+			pxc->slot_map_win();
 		}
 		else if (attr.map_state == IsViewable &&
-                ! attr.override_redirect)
-        {
+				 ! attr.override_redirect)
+		{
 			x_create(c_win);
 		}
 	}
@@ -222,12 +222,12 @@ void TheApp::slot_unmanage_apps()
 //-----------------------------------------------------------------------------
 void TheApp::slot_focus_topmost()
 {
-    XClient* pxc;
+	XClient* pxc;
 	Window  c_win, w1, w2, *wins;
 	uint    nwins;
 
 	if (XQueryTree(DPY(), ROOT_XWIN(),
-                    &w1, &w2, &wins, &nwins) == 0 || ! nwins) {
+				   &w1, &w2, &wins, &nwins) == 0 || ! nwins) {
 		//qDebug() << "No running _x_wins ...";
 		return;
 	}
@@ -237,10 +237,10 @@ void TheApp::slot_focus_topmost()
 		//qDebug() << "run process:" << cwin << "name:" << c_win;
 
 		if ((pxc = _x_frames.value(c_win)) != NULL ||
-			(pxc = _x_wins.value(c_win)) != NULL) {
-            if (pxc->_xw_state == X11_NormalState) {
-                _papp_man->set_active_xwin(pxc, false);
-                pxc->set_frame_status(true);
+				(pxc = _x_wins.value(c_win)) != NULL) {
+			if (pxc->_xw_state == X11_NormalState) {
+				_papp_man->set_active_xwin(pxc, false);
+				pxc->set_frame_status(true);
 				XRaiseWindow(DPY(), pxc->_x_wid);
 				restack(pxc);
 				pxc->set_subwin_focus(0, CurrentTime);
@@ -248,7 +248,7 @@ void TheApp::slot_focus_topmost()
 			}
 		}
 	}
-    refresh_buts();
+	refresh_buts();
 }
 
 void TheApp::refresh_buts()
@@ -304,14 +304,14 @@ void TheApp::wm_killwm()
         pxc->slot_destroy_xcli();
     }
     _x_wins.clear();
-	_x_frames.clear();
+    _x_frames.clear();
     std::vector<Panel*>::iterator it =  _panels.begin();
     for(; it != _panels.end(); ++it)
     {
         (*it)->close();
     }
-	::XSync(DPY(), FALSE);
-	flush();
+    ::XSync(DPY(), FALSE);
+    flush();
 }
 
 //-----------------------------------------------------------------------------
@@ -447,7 +447,7 @@ void TheApp::slot_run_app()
 {
     cond_if(_pset_torun==nullptr,return);
     cond_if(_is_running(*_pset_torun), return);
-/*
+    /*
     QString binname = _pset_torun->_cmd;
     if(_pset_torun->_cmd.contains(" "))
     {
@@ -465,26 +465,26 @@ void TheApp::slot_run_app()
     {
 */
 
-        char cd[512];
-        ::getcwd(cd,511);
+    char cd[512];
+    ::getcwd(cd,511);
 
-        setOverrideCursor(Qt::WaitCursor);
-        QTimer::singleShot(4096, this, SLOT(slot_normal_cursor()));
+    setOverrideCursor(Qt::WaitCursor);
+    QTimer::singleShot(4096, this, SLOT(slot_normal_cursor()));
 
-        QString cmd = "export DISPLAY=:";
-        int d = CFG(_display);
-        cmd += QString::number(d);
-        cmd += " && ";
+    QString cmd = "export DISPLAY=:";
+    int d = CFG(_display);
+    cmd += QString::number(d);
+    cmd += " && ";
 
-        std::string loco = "./"; loco += _pset_torun->_cmd.toStdString();
-        if(::access(loco.c_str(),0)==0)
-            cmd += "./";
+    std::string loco = "./"; loco += _pset_torun->_cmd.toStdString();
+    if(::access(loco.c_str(),0)==0)
+        cmd += "./";
 
-        cmd += _pset_torun->_cmd;
-        cond_if(!cmd.endsWith("&"),cmd += " &");
-        qDebug() << "start: " << cmd;
-        system(cmd.toUtf8());
-/*
+    cmd += _pset_torun->_cmd;
+    cond_if(!cmd.endsWith("&"),cmd += " &");
+    qDebug() << "start: " << cmd;
+    system(cmd.toUtf8());
+    /*
     }
     else
     {
@@ -516,11 +516,11 @@ static Qt::ButtonState get_modifiers()
     int win_x, win_y;
     uint keys_buttons;
     bool status = XQueryPointer(QPaintDevice::x11AppDisplay(),
-    QPaintDevice::x11AppRootWindow(),
-    &root, &child,
-    &root_x, &root_y,
-    &win_x, &win_y,
-    &keys_buttons);
+                                QPaintDevice::x11AppRootWindow(),
+                                &root, &child,
+                                &root_x, &root_y,
+                                &win_x, &win_y,
+                                &keys_buttons);
 
     if (status)
     {
@@ -568,10 +568,13 @@ bool TheApp::x11_event_filter(void *message, long *result)
     XEvent *event = reinterpret_cast<XEvent *>(message);
     switch (event->type)
     {
-        case ClientMessage:
-            qDebug()<<"client message............";
-        default:
-    /*
+    case CreateNotify:
+       //::XSelectInput(DPY(), event->xcreatewindow.window, SubstructureNotifyMask | PointerMotionMask);
+       break;
+    case ClientMessage:
+        qDebug()<<"client message............";
+    default:
+        /*
         {
                 if( event->xclient.message_type == x11atoms::atom(x11atoms::NET_ACTIVE_WINDOW) &&
                         event->xclient.format == 32)
@@ -583,63 +586,66 @@ bool TheApp::x11_event_filter(void *message, long *result)
 
             }
     */
-            break;
-        case KeyPress:
-            if (!_resend) PA->x_key_press(event);
-            _resend = false;
+        break;
+    case KeyPress:
+        if (!_resend) PA->x_key_press(event);
+        _resend = false;
+        return false;
+        break;
+    case KeyRelease:
+        if (!_resend) PA->x_key_release(event);
+        _resend = false;
+        return false;
+        break;
+    case MotionNotify:
+        //if(PA->_mdown)
+        //    PA->x_mouse_move(event);
+        break;
+    case ButtonRelease:
+        PA->_mdown=false;
+        break;
+    case ButtonPress:
+        return PA->x_button_press(event);
+        break;
+    case ConfigureNotify:
+        if (event->xconfigure.event != event->xconfigure.window)
+            return true;
+        return false;
+        break;
+    case ConfigureRequest:
+        return PA->x_configure(event);
+        break;
+    case MapRequest:
+        PA->x_create(event->xmaprequest.window);
+        return false;
+        break;
+    case MapNotify:
+        if (event->xmap.window == PA->_dashwid)
+        {
+            XSetInputFocus(DPY(), event->xmap.window, X11_None, CurrentTime);
+            XRaiseWindow(DPY(), event->xmap.window);
+        }
+        if (event->xmap.event != event->xmap.window)
+            return true;
+        else
             return false;
-            break;
-        case KeyRelease:
-            if (!_resend) PA->x_key_release(event);
-            _resend = false;
-            return false;
-            break;
-        case MotionNotify:
-            break;
-        case ButtonRelease:
-            break;
-        case ButtonPress:
-            return PA->x_button_press(event);
-            break;
-        case ConfigureNotify:
-            if (event->xconfigure.event != event->xconfigure.window)
-                return true;
-            return false;
-            break;
-        case ConfigureRequest:
-            return PA->x_configure(event);
-            break;
-        case MapRequest:
-            PA->x_create(event->xmaprequest.window);
-            return false;
-            break;
-        case MapNotify:
-            if (event->xmap.window == PA->_dashwid)
-            {
-                XSetInputFocus(DPY(), event->xmap.window, X11_None, CurrentTime);
-                XRaiseWindow(DPY(), event->xmap.window);
-            }
-            if (event->xmap.event != event->xmap.window)
-                return true;
-            else
-                return false;
-            break;
-        case UnmapNotify:
-            return PA->x_unmap(event);
-            break;
-        case DestroyNotify:
-            return PA->x_destroy(event);
-            break;
-        case PropertyNotify:
-            return PA->x_property(event);
-            break;
-        case ColormapNotify:
-            return PA->x_colormap_notify(event);
-            break;
-        case FocusIn:
-            PA->x_focus_in(event);
-            return false;
-            break;
+        break;
+    case UnmapNotify:
+        return PA->x_unmap(event);
+        break;
+    case DestroyNotify:
+        return PA->x_destroy(event);
+        break;
+    case PropertyNotify:
+        return PA->x_property(event);
+        break;
+    case ColormapNotify:
+        return PA->x_colormap_notify(event);
+        break;
+    case FocusIn:
+        PA->x_focus_in(event);
+        return false;
+        break;
     }
     if (_default_x11)
         return _default_x11(message, result);
@@ -715,17 +721,17 @@ bool TheApp::_is_key_mapped(const KeySym& sym)
 
     switch(sym)
     {
-        case XK_Home: // <
-        case XK_Left: // >
-        case XK_Right:  //home XK_Tab
-        case XK_End:
-        case 65293:
-        case 32:
-        case 65307:
-            QTimer::singleShot(500, this, SLOT(slot_redirect_to_lancer(sym)));
+    case XK_Home: // <
+    case XK_Left: // >
+    case XK_Right:  //home XK_Tab
+    case XK_End:
+    case 65293:
+    case 32:
+    case 65307:
+        QTimer::singleShot(500, this, SLOT(slot_redirect_to_lancer(sym)));
         break;
-        default:
-            break;
+    default:
+        break;
     }
     return false;
 }
@@ -781,12 +787,27 @@ bool TheApp::x_key_release(XEvent *event)
 //-----------------------------------------------------------------------------
 bool TheApp::x_button_release(XEvent *)
 {
+    _mdown = false;
     return true;
 }
 
 //-----------------------------------------------------------------------------
-bool TheApp::x_mouse_move(XEvent *)
+bool TheApp::x_mouse_move(XEvent *event)
 {
+    if(_mdown && _papp_man->_pactive &&
+            (std::abs(_papp_man->_pactive->_mousexy.x()-event->xbutton.x)>16 ||
+            std::abs(_papp_man->_pactive->_mousexy.y()-event->xbutton.y)>16))
+    {
+        int dx = _papp_man->_pactive->_mousexy.x()-event->xbutton.x;
+        int dy = _papp_man->_pactive->_mousexy.y()-event->xbutton.y;
+        //_papp_man->_pactive->move(-dx,dy);
+
+        XMoveWindow(DPY(),_papp_man->_pactive->_x_wid,-dx,dy);
+
+
+        _papp_man->_pactive->_mousexy.setY(event->xbutton.x);
+        _papp_man->_pactive->_mousexy.setY(event->xbutton.y);
+    }
     return true;
 }
 
@@ -833,7 +854,7 @@ bool TheApp::x_button_press(XEvent *event)
                 ::XSetInputFocus(DPY(), event->xbutton.window, X11_None, CurrentTime);
                 ::XUngrabKeyboard(DPY(), CurrentTime);
                 ::XGrabKeyboard(DPY(), ROOT_XWIN(), TRUE, GrabModeAsync,
-                              GrabModeAsync, CurrentTime);
+                                GrabModeAsync, CurrentTime);
             }
         }
 
@@ -842,6 +863,7 @@ bool TheApp::x_button_press(XEvent *event)
             pxc->_mousexy.setX(event->xbutton.x);
             pxc->_mousexy.setY(event->xbutton.y);
             qDebug() << "pressed on " << event->xbutton.x <<"," << event->xbutton.y;
+            _mdown = true;
         }
     }
     ::XAllowEvents (DPY(), _replay ? ReplayPointer : SyncPointer, CurrentTime);
@@ -905,7 +927,7 @@ bool TheApp::x_configure(XEvent *event)
         wc.height = event->xconfigurerequest.height;
         event->xconfigurerequest.value_mask &= (CWX|CWY|CWWidth|CWHeight);
         ::XConfigureWindow(DPY(), event->xconfigurerequest.window,
-                            event->xconfigurerequest.value_mask, &wc);
+                           event->xconfigurerequest.value_mask, &wc);
     }
     return true;
 }
@@ -1173,4 +1195,9 @@ void TheApp::top_up_panels(const XClient* pcli)
 {
     //restack(pcli);
 
+}
+
+bool TheApp::notify(QObject *a, QEvent *b)
+{
+    return QApplication::notify(a,b);
 }

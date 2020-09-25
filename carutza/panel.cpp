@@ -171,7 +171,8 @@ void Panel::_load_controls(const QString& folder)
     std::vector<XwnSet> buts;
     int                 swidth=_parent_width();
 
-    cond_if(sz.x()<=0, sz= QPoint(64,64));
+    cond_if(sz.x()<=0, sz= QPoint(_pcfg->_rect.width(),
+                                  _pcfg->_rect.height()));
     _icwidth = sz.x();
     std::vector<QWidget*>::iterator b = _butons.begin();
     for(;b!= _butons.end();++b)
@@ -180,10 +181,6 @@ void Panel::_load_controls(const QString& folder)
     }
     _butons.clear();
     _layerwidth = _load_buts(folder, sz, buts);
-    if(_layerwidth < _pcfg->_rect.width())
-        _layerwidth = _pcfg->_rect.width(); // mco-2020
-    this->setFixedWidth(_layerwidth);
-    this->resize(_layerwidth, _pcfg->_rect.height());
     this->move(_pcfg->_rect.left(),_pcfg->_rect.top());
 
     if(folder != _basefolder)
@@ -203,7 +200,7 @@ void Panel::_load_controls(const QString& folder)
         _add_widget(pb,Qt::AlignRight);
         _butons.push_back(pb);
     }
-    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align-1));
+    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align));
     _layout->setSpacing(_pcfg->_spacing);
     int idx=0;
     std::vector<XwnSet>::iterator it = buts.begin();
@@ -213,9 +210,9 @@ void Panel::_load_controls(const QString& folder)
         ++idx;
     }
 
-    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align-1));
+    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align));
     _layout->setSpacing(_pcfg->_spacing);
-    usleep(10000);
+    usleep(0xFFFF);
     if(_inotify)
     {
         _inotify->watch(folder);
@@ -337,7 +334,6 @@ void Panel::slot_floder_ch(const QString& folder)
 void Panel::run_app(OdButton* pb)
 {
     _folderchanged=false;
-    //PA->runapp(pb->xset());
     CtrlHolder::run_app(pb);
 }
 
@@ -444,14 +440,14 @@ void Panel::_done_scrooling(int dr)
 void Panel::_scrool_lancer(int dx ,int dy)
 {
     Q_UNUSED(dy);
-    int                 swidth= _parent_width();
+    int    swidth=CFG(_drect).x()-64;
 
     QPoint pt = this->pos();
     int newx = pt.x()+dx;
     if(newx>0)
         newx=0;
-    else if (newx < -(this->width() -swidth))
-        newx=-(this->width() - swidth);
+    else if (newx < -(this->width() - swidth))
+        newx =- ((this->width() - swidth));
     move(newx, _pcfg->_rect.y());
    _moved=true;
 }
@@ -539,7 +535,7 @@ void   Panel::refresh_buts()
         if(pb)
             pb->refresh();
     }
-    this->move(_pcfg->_rect.left(),_pcfg->_rect.top());
+    //this->move(_pcfg->_rect.left(),_pcfg->_rect.top());
 }
 
 /*--------------------------------------------------------------------------------------

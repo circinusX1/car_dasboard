@@ -54,7 +54,7 @@ struct CfgPanel
 };
 
 class MySett;
-class QtKisstu : public Kisstu
+class QtKisstu : public Cbdler
 {
     QString _fn;
 public:
@@ -71,7 +71,7 @@ public:
     const QString& fileName(){return _fn;}
     struct Typoc{
         std::string _s[4]={"0","-1","-1","0"};
-        Typoc(const Kisstu::Node* pn){
+        Typoc(const Cbdler::Node* pn){
             if(pn!=nullptr){
                 size_t els = pn->count();
                 for(size_t e=0;e<els;e++)
@@ -79,11 +79,13 @@ public:
                     _s[e] = pn->value(e);
                     if(_s[e]=="MAX")_s[e]="-1";
                     if(_s[e]=="NEXT")_s[e]="-2";
+                    if(_s[e]=="BOTTOM")
+                        _s[e]="-3";
                 }
             }
         }
         QString toString()const{return QString(_s[0].c_str());}
-        bool toBool()const{return _s[0]=="true";}
+        bool toBool()const{return _s[0]=="true" || _s[0]=="1";}
         int toInt()const{return std::stod(_s[0]);}
         QRect toRect()const{
             QRect r;
@@ -98,6 +100,8 @@ public:
                          std::stod(_s[1]));
         }
         QPoint toPoint()const{
+            if(_s[0]=="MAX")_s[0]=="-1";
+            if(_s[1]=="MAX")_s[0]=="-1";
             return QPoint(std::stod(_s[0]),
                           std::stod(_s[1]));
         }
@@ -122,7 +126,8 @@ public:
         const Node* pn = _curent->pnode(ks);
         if(pn){
             _curent = _curent->pnode(ks);
-            return true;
+            if(_curent!=nullptr)
+                return true;
         }
         return false;
     }
@@ -131,11 +136,7 @@ public:
     {
         _curent = root();
     }
-
-
-
-
-    const Kisstu::Node*  _curent;
+    const Cbdler::Node*  _curent;
 };
 
 
@@ -293,7 +294,7 @@ struct XwnSet
         _pname = s.value("Pname").toString();
         _owndesktop= s.value("OwnDesktop").toBool();
         _hidden= s.value("Hidden").toBool();
-        _icwh= s.value("Isize").toPoint();
+        _icwh = s.value("Isize").toPoint();
         _rpos = s.value("Xrect").toInt();
         _icon = s.value("Icon").toString();
         _caticon = s.value("CatIcon").toString();

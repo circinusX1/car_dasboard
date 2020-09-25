@@ -1,6 +1,0 @@
-Pname=mplayer
-Name="Rear view"
-Icon=rearview.png
-Xrect=1
-Exec="mplayer -vf scale=768:800 http://$IP/img/video.asf"
-Category=XDevices
