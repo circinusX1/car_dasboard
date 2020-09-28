@@ -39,15 +39,16 @@ MySett::MySett(const QString &fileName, bool global):_killdelay(100)
     char pw[256];
     ::getcwd(pw, 255);
     _workdir = pw;
-
+    _workdir += "/";
+    if(::access((const char*)fileName.toUtf8(),0)!=0)
+    {
+        return;
+    }
     if(this->parse((const char*)fileName.toUtf8())==nullptr)
     {
         return;
     }
-
-
     _curent = this->root();
-    _setdir = _workdir+"/config/";
 
     _base=this->value("dashboard").toString();
     _fontpercent=this->value("font_percent").toInt();
@@ -60,70 +61,74 @@ MySett::MySett(const QString &fileName, bool global):_killdelay(100)
     }
     _drect.setX(PA->desktop()->width());
     _drect.setY(PA->desktop()->height());
+    _displays = this->value("displays").toInt();
+    _display = this->value("display").toInt();
 
-    //up to 8 panels
+    this->beginGroup("panels");
+    int count = this->count();
     int posy = 0;
-    for(int k=0;k<8;++k)
+    for(int k=0;k<count;++k)
     {
         CfgPanel    pset;
-        QString     pe("panel");
-        pe += QString::number(k);
-
-        if(false == this->beginGroup(pe))
-            continue;
-        pset._rect = this->value("position").toRect();
-
-        if(pset._rect.left()<0)
-            pset._rect.setLeft(0);
-        int tp = pset._rect.top();
-        if(tp<0){
-            if(tp==-3){
-                pset._rect.moveTo(0,drect().y()-pset._rect.height());
-            }
-            else{
-                pset._rect.moveTo(0,posy);
-            }
-        }
-        if(pset._rect.right()<0)
-            pset._rect.setWidth(this->_drect.y());
-        if(pset._rect.bottom()<0){
-            pset._rect.setHeight(this->_drect.y()-posy);
-        }
-
-        int x,y,w,h;
-        x=pset._rect.left();
-        y=pset._rect.top();
-        w=pset._rect.width();
-        h=pset._rect.height();
-
-        pset._name    = pe;
-        pset._icons   = this->value("icons").toPoint();
-
-        pset._align   = this->value("align").toInt();
-
-        pset._notify  = this->value("notify").toBool();
-        pset._arrange = this->value("arrange").toInt();
-        pset._spacing = this->value("spacing").toInt();
-        pset._bgimage = this->value("bgimage").toString();
-        pset._dir     = this->value("config").toString();
-        if(!pset._bgimage.isEmpty())
+        if(this->goto_child(k))
         {
-            if(pset._bgimage[0]=='/')
+            if(this->value("disabled").toBool()==false)
             {
-                //absolute path
-                QString img = pset._bgimage;
-                pset._bgimage = _workdir + pset._bgimage;
-            }
-        }
-        pset._dir     += "/";
-        pset._dir     += this->value("basedir").toString();
-        pset._dir     += "/";
-        _panels[pe]   = pset;
-        posy += pset._rect.height();
-        this->endGroup();
-    }
+                pset._name    = this->key();
+                OOO << "reading: " << pset._name << "\n";
+                pset._rect = this->value("position").toRect();
 
-/*
+                if(pset._rect.left()<0)
+                    pset._rect.setLeft(0);
+                int tp = pset._rect.top();
+                if(tp<0){
+                    if(tp==-3){
+                        pset._rect.moveTo(0,drect().y()-pset._rect.height());
+                    }
+                    else{
+                        pset._rect.moveTo(0,posy);
+                    }
+                }
+                if(pset._rect.right()<0)
+                    pset._rect.setWidth(this->_drect.x());
+                if(pset._rect.bottom()<0){
+                    pset._rect.setHeight(this->_drect.y()-posy);
+                }
+
+                int x,y,w,h;
+                x=pset._rect.left();
+                y=pset._rect.top();
+                w=pset._rect.width();
+                h=pset._rect.height();
+
+
+                pset._icons   = this->value("icons").toPoint();
+
+                pset._align   = this->value("align").toInt();
+
+                pset._notify  = this->value("notify").toBool();
+                pset._arrange = this->value("arrange").toInt();
+                pset._spacing = this->value("spacing").toInt();
+                pset._bgimage = this->value("bgimage").toString();
+                if(!pset._bgimage.isEmpty())
+                {
+                    if(pset._bgimage[0]=='/')
+                    {
+                        //absolute path
+                        QString img = pset._bgimage;
+                        pset._bgimage = _workdir + pset._bgimage;
+                    }
+                }
+                _panels[pset._name]   = pset;
+                posy += pset._rect.height();
+            }
+            this->goto_parent();
+        }
+
+    }
+    this->endGroup();
+
+    /*
     QString vn;
     _theme =  _images + "theme/" + value("theme").toString()+"/";    //=32
     this->beginGroup("apps");
@@ -156,8 +161,7 @@ MySett::MySett(const QString &fileName, bool global):_killdelay(100)
 
     //?    if(value("caption_height").toInt()==0)
     //?        this->setValue("caption_height",18);
-    _displays = this->value("displays").toInt();
-    _display = this->value("display").toInt();
+
 
     _ok=true;
 }
@@ -303,7 +307,7 @@ bool MySett::find_widget(const QString& name, XwnSet& outval)
             QString   pname = df.value("Pname").toString();
             if(!pname.isEmpty() && (pname == name || name.contains(pname)))
             {
-                outval.Load(df);
+                outval.load_config(df);
                 qDebug()<< outval._name << outval._rect.left() << "," <<outval._rect.top();
                 return true;
             }
@@ -337,10 +341,10 @@ QString MySett::read_mangled(const char* entry)
 }
 
 bool MySett::read_rect( MySett& conf,
-               const char* entry,
-               QRect& xpos,
-               bool ownd,
-               int offset)
+                        const char* entry,
+                        QRect& xpos,
+                        bool ownd,
+                        int offset)
 {
 
     xpos = conf.value("rect").toRect();

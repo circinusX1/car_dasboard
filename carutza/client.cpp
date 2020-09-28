@@ -704,9 +704,9 @@ void XClient::resize_request(int cx, int cy, int cw, int ch)
     n_pw = base_w;
     n_ph = base_h + CFGX("caption_height").toInt() + 8;
     resize(n_pw, n_ph);
-    usleep(10000);
+    usleep(0xFFFF);
     XResizeWindow(DPY(), _x_wid, base_w, base_h);
-    usleep(10000); // does not apply without this
+    usleep(0xFFFF); // does not apply without this
 }
 
 /*--------------------------------------------------------------------------------------

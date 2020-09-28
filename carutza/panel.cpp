@@ -39,18 +39,24 @@ Project:    CARUTZA
   -------------------------------------------------------------------------------------*/
 Panel::Panel(CfgPanel* pe, QWidget *parent)
     : CtrlHolder(pe, parent),_inotify(0),
-                      _moved(false),
-                      _overflow(0),
-                      _layerwidth(0),
-                      _selected(-1),
-                      _hidden(false),
-                      _folderchanged(false)
+      _moved(false),
+      _overflow(0),
+      _selected(-1),
+      _hidden(false),
+      _folderchanged(false)
 
 {
+
+
     _panimation = new QPropertyAnimation(this, "geometry");
     if(pe->_notify) _inotify = new DskWatch(this);
     connect(_panimation,SIGNAL(finished()),this,SLOT(slot_anim_done()));
-    _config_ui();
+
+
+    _basefolder = _pcfg->_name;
+    _curfolder = _basefolder;
+    slot_change_folder();
+
 }
 
 /*--------------------------------------------------------------------------------------
@@ -63,34 +69,31 @@ Panel::~Panel(void)
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-void Panel::_config_ui()
+void Panel::_config_ui(const std::vector<XwnSet>& buts)
 {
-    _basefolder = _pcfg->_dir;
-    _curfolder = _basefolder;
-
+    int dr = CFG(_drect).x();
     int x = _pcfg->_rect.width(),y=_pcfg->_rect.height();
     this->resize(x, y);
     x = _pcfg->_rect.left(),y=_pcfg->_rect.top();
     this->move(x,y);
-
-    _layout_it();
-    _load_controls(_basefolder);
-
     this->show();
 }
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-size_t  Panel::_load_buts(const QString& folder, const QPoint& sz, std::vector<XwnSet>& buts)
+size_t  Panel::_load_buts(const QString& folder,
+                          const QPoint& sz,
+                          std::vector<XwnSet>& buts)
 {
-    QDir            dir(folder);
+    QString         fld;
+    if(folder.at(0)!='/')
+        fld = CFG(_workdir+folder);
+    else {
+        fld = folder;
+    }
+    QDir            dir(fld);
     QFileInfoList   files = dir.entryInfoList();
     int             icwidth = 0;
-    //desktop conf
-    //Name=Setup Folder
-    //Icon=settings.png
-    //IconSize=@Size(32 32)
-
 
     foreach(const QFileInfo &fi, files)
     {
@@ -102,12 +105,12 @@ size_t  Panel::_load_buts(const QString& folder, const QPoint& sz, std::vector<X
         {
             MySett df(sfile);
             XwnSet butset;
-            if(df.ok() && butset.Load(df))
+            if(df.ok() && butset.load_config(df))
             {
                 butset._wt = XwnSet::WIG_DESKTOP;
-                cond_if(butset._icwh.x()<=0,butset._icwh = sz);
+                cond_if(butset._imgdim.x()<=0,butset._imgdim = sz);
                 cond_if(butset._align==0,butset._align = _pcfg->_align);
-                icwidth+=butset._icwh.x()+_pcfg->_spacing;
+                icwidth+=butset._imgdim.x()+_pcfg->_spacing;
                 buts.push_back(butset);
             }
         }
@@ -115,12 +118,12 @@ size_t  Panel::_load_buts(const QString& folder, const QPoint& sz, std::vector<X
         {
             MySett df(sfile);
             XwnSet butset;
-            if(df.ok() && butset.Load(df))
+            if(df.ok() && butset.load_config(df))
             {
                 butset._wt = XwnSet::WIG_APPLET;
-                cond_if(butset._icwh.x()<=0, butset._icwh = sz);
+                cond_if(butset._imgdim.x()<=0, butset._imgdim = sz);
                 cond_if(butset._align==0,butset._align = _pcfg->_align);
-                icwidth+=butset._icwh.x()+_pcfg->_spacing;
+                icwidth+=butset._imgdim.x()+_pcfg->_spacing;
                 buts.push_back(butset);
             }
         }
@@ -128,25 +131,30 @@ size_t  Panel::_load_buts(const QString& folder, const QPoint& sz, std::vector<X
         {
             MySett df(sfile);
             XwnSet butset;
-            if(df.ok() && butset.Load(df))
+            if(df.ok() && butset.load_config(df))
             {
                 butset._wt = XwnSet::WIG_SIGNAL;
-                cond_if(butset._icwh.x()<=0, butset._icwh = sz);
+                cond_if(butset._imgdim.x()<=0, butset._imgdim = sz);
                 cond_if(butset._align==0,butset._align = _pcfg->_align);
-                icwidth+=butset._icwh.x()+_pcfg->_spacing;
+                icwidth+=butset._imgdim.x()+_pcfg->_spacing;
                 buts.push_back(butset);
             }
         }else if(fi.isDir() && !fi.isHidden())
         {
-            MySett df(sfile+"/desktop.conf");
-            XwnSet butset;
-            butset.Load(df);
-            butset._pname=">";
-            butset._cmd=sfile; //which folder to change
-            cond_if(butset._icwh.x()<=0, butset._icwh = sz);
-            cond_if(butset._align==-1,butset._align = _pcfg->_align);
-            icwidth+=butset._icwh.x()+_pcfg->_spacing;
-            buts.push_back(butset);
+            QString fn = sfile+"/desktop.conf";
+            if(0==::access(fn.toUtf8(),0))
+            {
+                MySett df(fn);
+
+                XwnSet butset;
+                butset.load_config(df);
+                butset._pname=">";
+                butset._cmd=sfile; //which folder to change
+                cond_if(butset._imgdim.x()<=0, butset._imgdim = sz);
+                cond_if(butset._align==-1,butset._align = _pcfg->_align);
+                icwidth+=butset._imgdim.x()+_pcfg->_spacing;
+                buts.push_back(butset);
+            }
         }
     }
     cond_if(folder != _basefolder, icwidth += sz.x()+1); /// add back buton space
@@ -165,11 +173,11 @@ void Panel::fit_to_parent(const QSize& proom)
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-void Panel::_load_controls(const QString& folder)
+void Panel::_load_controls(const QString& folder, std::vector<XwnSet>& buts)
 {
     QPoint              sz = _pcfg->_icons;
-    std::vector<XwnSet> buts;
     int                 swidth=_parent_width();
+    int                 cols;
 
     cond_if(sz.x()<=0, sz= QPoint(_pcfg->_rect.width(),
                                   _pcfg->_rect.height()));
@@ -183,9 +191,15 @@ void Panel::_load_controls(const QString& folder)
     _layerwidth = _load_buts(folder, sz, buts);
     this->move(_pcfg->_rect.left(),_pcfg->_rect.top());
 
+    _layout_it(buts.size()+int(folder != _basefolder), _pcfg->_spacing, _pcfg->_rect);
+    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align));
+
+
     if(folder != _basefolder)
     {
         XwnSet set;
+        set._imgdim.setX(96);
+        set._imgdim.setY(96);
         set._wt =  XwnSet::WIG_BACK;
         set._cmd = _basefolder;
         set._name = " ";
@@ -197,40 +211,41 @@ void Panel::_load_controls(const QString& folder)
                 SLOT(done_scrolling(int)));
         connect(pb,SIGNAL(sig_scrolled(int)),this,
                 SLOT(done_scrolling(int)));
-        _add_widget(pb,Qt::AlignRight);
+        _add_widget(pb,set._imgdim, 0,0,Qt::AlignLeft);
         _butons.push_back(pb);
     }
-    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align));
-    _layout->setSpacing(_pcfg->_spacing);
+
+
     int idx=0;
+
     std::vector<XwnSet>::iterator it = buts.begin();
+
+    int row = 0;
+    int col = folder != _basefolder;
     for(;it!= buts.end();++it)
     {
-        _add_button((*it), idx);
-        ++idx;
+        _add_button((*it), col, row);
+        ++col;
     }
 
-    _layout->setAlignment((Qt::AlignmentFlag)(_pcfg->_align));
-    _layout->setSpacing(_pcfg->_spacing);
-    usleep(0xFFFF);
     if(_inotify)
     {
         _inotify->watch(folder);
     }
-   _calc_overflow();
-   _selected=-1;
+    _re_stretch();
+    _calc_overflow();
+    _selected=-1;
 }
 
 /*--------------------------------------------------------------------------------------
   messy, but there were no requirements and whatever talks changed every day
   -------------------------------------------------------------------------------------*/
-void Panel::_add_button(const XwnSet& xs, int index)
+void Panel::_add_button(const XwnSet& xs, int col, int row)
 {
     OdButton* pb;
-    Q_UNUSED(index);
     if(xs._wt == XwnSet::WIG_DESKTOP)
     {
-        pb = new LunchButt(this, xs._icwh, xs);
+        pb = new LunchButt(this, xs._imgdim, xs);
         MySett& ps = MySett::config();
         QString qsi = ps.images();
 
@@ -242,13 +257,13 @@ void Panel::_add_button(const XwnSet& xs, int index)
             connect(pb,SIGNAL(sig_clicked(OdButton*)),this,SLOT(change_folder(OdButton*)));
         else
             connect(pb,SIGNAL(sig_clicked(OdButton*)),this,SLOT(run_app(OdButton*)));
-        _add_widget(pb, xs._align);
+        _add_widget(pb, xs._imgdim, col, row, xs._align);
     }
     else if(xs._wt == XwnSet::WIG_SIGNAL)
     {
         if(xs._cmd == "Appman")
         {
-            pb = new Appman(this, xs._icwh, xs);
+            pb = new Appman(this, xs._imgdim, xs);
             pb->set_image("",xs._icon);
             cond_if(!xs._caticon.isEmpty(),pb->set_cat_image("",xs._caticon));
             connect(pb,SIGNAL(sig_moving(OdButton*,int,int)),this,SLOT(scrool_lancer(OdButton*,int,int)));
@@ -258,7 +273,7 @@ void Panel::_add_button(const XwnSet& xs, int index)
         //connect(pb,SIGNAL(sig_clicked(LunchButt*)),this,SLOT(slot_pressed(LunchButt*)));
         else
         {
-            pb = new LunchButt(this, xs._icwh, xs);
+            pb = new LunchButt(this, xs._imgdim, xs);
             pb->set_image("",xs._icon);
             cond_if(!xs._caticon.isEmpty(),pb->set_cat_image("",xs._caticon));
             connect(pb,SIGNAL(sig_moving(OdButton*,int,int)),this,SLOT(scrool_lancer(OdButton*,int,int)));
@@ -268,19 +283,20 @@ void Panel::_add_button(const XwnSet& xs, int index)
             else
                 connect(pb,SIGNAL(sig_clicked(OdButton*)),this,SLOT(run_app(OdButton*)));
         }
-        _add_widget(pb, xs._align);
+        _add_widget(pb, xs._imgdim, col, row, xs._align);
     }
     else
     {
-        pb = new QsLunchButt(this, xs._icwh, xs);
+        pb = new QsLunchButt(this, xs._imgdim, xs);
         connect(pb,SIGNAL(sig_clicked(OdButton*)),this,SLOT(run_intern(OdButton*)));
         pb->set_image("",xs._icon);
         connect(pb,SIGNAL(sig_moving(OdButton*,int,int)),this,SLOT(scrool_lancer(OdButton*,int,int)));
         connect(pb,SIGNAL(sig_scrolled(int)),this,SLOT(done_scrolling(int)));
 
-        _add_widget(pb, xs._align);
+        _add_widget(pb, xs._imgdim, col, row, xs._align);
     }
-     _butons.push_back(pb);
+    _butons.push_back(pb);
+    pb->show();
 }
 
 /*--------------------------------------------------------------------------------------
@@ -307,7 +323,7 @@ void Panel::change_folder(OdButton* pb)
             _curfolder = newfolder;
             QTimer::singleShot(100, this, SLOT(slot_change_folder()));
         }
-        usleep(10000);
+        usleep(0xFFFF);
     }
 }
 
@@ -316,7 +332,11 @@ void Panel::change_folder(OdButton* pb)
 void Panel::slot_change_folder()
 {
     if(!_curfolder.isEmpty())
-        _load_controls(_curfolder);
+    {
+        std::vector<XwnSet> buts;
+        _load_controls(_curfolder, buts);
+        _config_ui(buts);
+    }
 }
 
 /*--------------------------------------------------------------------------------------
@@ -373,11 +393,11 @@ void Panel::mousePressEvent(QMouseEvent *event)
 void Panel::mouseMoveEvent(QMouseEvent * event)
 {
     if(_abtomove &&
-       ((abs(_presspt.x()-event->pos().x()) > 16) ||
-       (abs(_presspt.y()-event->pos().y()) > 16)))
+            ((abs(_presspt.x()-event->pos().x()) > 16) ||
+             (abs(_presspt.y()-event->pos().y()) > 16)))
     {
         _scrool_lancer(event->pos().x()-_presspt.x(),
-                      event->pos().y()-_presspt.y());
+                       event->pos().y()-_presspt.y());
         qDebug()<<event->pos().x()-_presspt.x();
     }
 }
@@ -421,7 +441,7 @@ void Panel::_done_scrooling(int dr)
             xe  = (xs / _icwidth) - mox;
             xe *= _icwidth;
         }
-/*
+        /*
         _panimation->setDuration(300);
         _panimation->setStartValue(QRect(xs,this->pos().y(),
                                          this->rect().width(),this->rect().height()));
@@ -432,7 +452,7 @@ void Panel::_done_scrooling(int dr)
         _panimation->start();
 */
 
-     }
+    }
 }
 
 /*--------------------------------------------------------------------------------------
@@ -449,7 +469,7 @@ void Panel::_scrool_lancer(int dx ,int dy)
     else if (newx < -(this->width() - swidth))
         newx =- ((this->width() - swidth));
     move(newx, _pcfg->_rect.y());
-   _moved=true;
+    _moved=true;
 }
 
 /*--------------------------------------------------------------------------------------
@@ -551,7 +571,7 @@ void Panel::slot_anim_done()
 {
     if(_moved)
         _calc_overflow();
-     this->refresh_buts();
+    this->refresh_buts();
     _moved=false;
 }
 

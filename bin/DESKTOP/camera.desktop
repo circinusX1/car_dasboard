@@ -2,7 +2,8 @@
 Pname{cheese}
 Name{"cam"}
 Exec{"cheese"}
-Xrect{0}
+Xrect{2}
+Xframe{1}
 Icon{camera}
 }
 

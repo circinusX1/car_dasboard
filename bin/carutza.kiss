@@ -1,0 +1,83 @@
+{
+    display{1}
+    zorder{0}
+    displays{2}
+    dashboard{$PWD/}
+    rect{0, MAX, MAX, 100}
+    top_panel{70}
+    top_icons{64,64}
+    top_sysmenu{140,64}
+    backfollow{1}
+    theme{default}
+    ~start{navit}
+    ~start{"$PWD/op_clock_applet &"}
+    ~start{"xfce4-panel"}
+    main_menu{1}
+    dock_pix{$THEME/dockbar.png}
+    dock_factor{1}
+    dock_autohide{0}
+    d_icon_pix{$THEME/dockicon.png}
+    font_percent{10}
+    forceimages{1}
+    force_repaint{1}
+    caption_height{18}
+    desktop_show{0}
+    kill_delay{256}
+    config{config}
+
+
+    comments{
+        AlignLeft {1}
+        AlignLeading {1}
+        AlignRight {2}
+        AlignTrailing {2}
+        AlignHCenter {4}
+        AlignJustify {8}
+        AlignAbsolute {10}
+    }
+
+
+
+    panels{
+        notifications{
+            disabled{false}
+            position{0,NEXT,MAX,32}
+            icons{32,32}
+            align{1}
+            spacing{3}
+            bgimage{/icons/notification_bkg.png}
+            config{config}
+            layout{0}
+        }
+        DESKTOP{
+            disabled{false}
+            icons{96,96}
+            position{0,NEXT,MAX,202}
+            align{1}
+            notify{true}
+            spacing{17}
+            bgimage{/icons/launcher_bkg.png}
+            config{config}
+            layout{0}
+        }
+        bottompanel{
+            disabled{true}
+            position{0,BOTTOM,MAX,72}
+            icons{MAX,MAX}
+            height{72}
+            width{720}
+            align{4}
+            spacing{0}
+            config{config}
+            layout{0}
+            spacing{10}
+            bgimage{/icons/launcher_bkg.png}
+            config{config}
+        }
+    }
+
+    apps{
+        mplayer{114,100,300}
+        navit{100,114,600}
+    }
+}

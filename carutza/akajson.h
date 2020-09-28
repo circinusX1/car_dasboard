@@ -146,6 +146,18 @@ protected:
         }
 
 public:
+        const std::string name()const{
+            return this->_name;
+        }
+
+        const Node* pparent()const {
+            return _parent;
+        }
+
+        const Node* pnode(int index)const {
+            return _at(index);
+        }
+
         const Node* pnode(const char* s)const {
             std::string ss = s;
             return _at(ss);
@@ -192,6 +204,10 @@ private:
             while(pn->_parent)
                 pn=pn->_parent;
             return pn;
+        }
+
+        const Node* _at(int index)const {
+            return _values.at(index);
         }
 
         const Node* _at(const std::string& s)const {

@@ -68,11 +68,11 @@ public slots:
     void slot_change_folder();
     void fit_to_parent(const QSize& proom);
 protected:
-    void    _config_ui();
-    void    _load_controls(const QString& folder);
+    void    _config_ui(const std::vector<XwnSet>& buts);
+    void    _load_controls(const QString& folder, std::vector<XwnSet>& buts);
     void    _done_scrooling(int);
     void    _scrool_lancer(int dx ,int dy);
-    void    _add_button(const XwnSet& xs, int index) ;
+    void    _add_button(const XwnSet& xs, int col,  int row=0);
     size_t  _load_buts(const QString& folder, const QPoint& sz,
                        std::vector<XwnSet>& buts);
     void    _calc_overflow();
@@ -95,7 +95,6 @@ protected:
     bool            _moved;
     int             _icwidth;
     int             _overflow;
-    int             _layerwidth;
     int             _selected;
     bool            _hidden;
     bool            _folderchanged;

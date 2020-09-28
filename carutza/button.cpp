@@ -450,11 +450,13 @@ void OdButton::set_font_size(const QSize& sz)
 --------------------------------------------------------------------------------------*/
 void OdButton::refresh()
 {
+    /*
     QPoint tp = this->pos();
     tp.setX(tp.x()+1);
     move(tp);
     tp.setX(tp.x()-1);
     move(tp);
+    */
     update();
 }
 

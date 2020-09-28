@@ -231,7 +231,7 @@ bool  Appman::make_visible(const QString& app, bool show)
             rescan_visibilities(pxc);
         else
             pxc->hide();
-        usleep(10000);
+        usleep(0xFFFF);
         return true;
     }
     return false;

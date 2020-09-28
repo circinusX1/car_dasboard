@@ -58,8 +58,6 @@ CtrlHolder::CtrlHolder(CfgPanel* pconfpan, QWidget *parent)
     }
 }
 
-
-
 //-----------------------------------------------------------------------------
 CtrlHolder::~CtrlHolder()
 {
@@ -76,36 +74,50 @@ void CtrlHolder::_config_ui()
 {
 }
 
-
-void  CtrlHolder::_layout_it()
+void  CtrlHolder::_layout_it(int  buts, int spacing, const QRect& maxw)
 {
-    if(_pcfg->_layout==0){
-        _layout = new QHBoxLayout(nullptr,0,0);
-        ((QHBoxLayout*)_layout)->setSpacing(_pcfg->_spacing);
-        ((QHBoxLayout*)_layout)->setDirection(QBoxLayout::LeftToRight);
-    }
-    else if(_pcfg->_layout==1)
-        _layout = new QVBoxLayout(nullptr,0,_pcfg->_spacing);
-    else {
-        _layout = new QGridLayout(nullptr,
-                                  _pcfg->_rect.width()+_pcfg->_icons.x()/
-                                  _pcfg->_icons.x()+_pcfg->_spacing,
-                                  _pcfg->_rect.height()+_pcfg->_icons.y()/
-                                  _pcfg->_icons.y()+_pcfg->_spacing,0,
-                                  _pcfg->_spacing+_pcfg->_icons.x());
-    }
+    if(_layout)
+        delete _layout;
+    _layout = new QGridLayout(nullptr,1,buts+1/*mid stretch*/,0,spacing);
+
     _layout->setSizeConstraint(QBoxLayout::SetMaximumSize);
     _layout->setContentsMargins(0, 0, 0, 0);
+    _layout->setAlignment(Qt::AlignLeft|Qt::AlignTop);
+    _layout->setGeometry(maxw);
+    _leftovers = maxw.width();
+/*
+    int cs = _layerwidth / buts;
+    for(int c=0;c<buts;c++)
+        _layout->setColStretch(c,cs);
+*/
     this->setLayout(_layout);
+    _lefts = 0;
+    _rights = buts;
 }
 
-void CtrlHolder::_add_widget(QWidget* pw, int align)
+// stretch the remainin mid one to separate left and rights
+void   CtrlHolder::_re_stretch()
 {
-    const char* cn = _layout->metaObject()->className();
-    if(::strcmp(cn,"QGridLayout"))
-        ((QHBoxLayout*)_layout)->addWidget(pw, 0,Qt::AlignLeft);
-    else {
-        ((QGridLayout*)_layout)->addWidget(pw);
+    _layout->setColStretch(_lefts,_leftovers);
+}
+
+void CtrlHolder::_add_widget(QWidget* pw,
+                             const QPoint& icx,
+                             int col, int row, int align)
+{
+    int xcx = icx.x();
+    if(align==0x0001){
+
+        _layout->addWidget(pw,row,_lefts,Qt::AlignmentFlag(align));
+        _layout->setColStretch(_lefts,xcx);
+        ++_lefts;
+        _leftovers-=xcx;
+    }
+    else{
+        _layout->addWidget(pw,row,_rights,Qt::AlignmentFlag(align));
+        _layout->setColStretch(_rights,xcx);
+        --_rights;
+        _leftovers-=xcx;
     }
 }
 

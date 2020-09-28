@@ -31,7 +31,9 @@ class LunchButt : public OdButton
 {
 	Q_OBJECT
 public:
-    explicit LunchButt(CtrlHolder* p, const QPoint& size, const XwnSet& cmd, QWidget *parent=0);
+    explicit LunchButt(CtrlHolder* p,
+                       const QPoint& size,
+                       const XwnSet& cmd, QWidget *parent=0);
     virtual ~LunchButt(void){};
 
 public:

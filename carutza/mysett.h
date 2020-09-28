@@ -47,7 +47,6 @@ struct CfgPanel
     int     _layout;
     QRect   _rect;
     QPoint   _icons;
-    QString _dir;
     QString _name;
     QString _bgimage;
     std::vector<QString> _kids;
@@ -86,7 +85,9 @@ public:
         }
         QString toString()const{return QString(_s[0].c_str());}
         bool toBool()const{return _s[0]=="true" || _s[0]=="1";}
-        int toInt()const{return std::stod(_s[0]);}
+        int toInt()const{
+            return std::stod(_s[0]);
+        }
         QRect toRect()const{
             QRect r;
             r.setX(std::stod(_s[0]));
@@ -99,15 +100,19 @@ public:
             return QSize(std::stod(_s[0]),
                          std::stod(_s[1]));
         }
-        QPoint toPoint()const{
-            if(_s[0]=="MAX")_s[0]=="-1";
-            if(_s[1]=="MAX")_s[0]=="-1";
+        QPoint toPoint(){
+            if(_s[0]=="MAX")_s[0]="-1";
+            if(_s[1]=="MAX")_s[0]="-1";
             return QPoint(std::stod(_s[0]),
                           std::stod(_s[1]));
         }
     };
 
-    const Typoc value(const char* key, int dev=0){
+    const QString key(){
+        return QString(_curent->name().c_str());
+    }
+
+    Typoc value(const char* key, int dev=0){
         const Node* pn = _curent->pnode(key);
         if(pn==nullptr)
         {
@@ -117,7 +122,7 @@ public:
     }
 
     const Typoc value(const QString& key, int dev0=0){
-        const Node* pn = _curent->pnode(key.toUtf8());
+        const Node* pn = _curent->pnode((const char*)key.toUtf8());
         return Typoc(pn);
     }
 
@@ -130,6 +135,25 @@ public:
                 return true;
         }
         return false;
+    }
+
+    bool  goto_child(int index)
+    {
+        if(_curent->count()>index)
+        {
+            _curent = _curent->pnode(index);
+            return true;
+        }
+        return false;
+    }
+
+    void   goto_parent()
+    {
+        _curent = _curent->pparent();
+    }
+
+    int count(){
+        return _curent ? _curent->count() : 0;
     }
 
     void endGroup()
@@ -194,7 +218,6 @@ private:
 
 public:
     QString _workdir;
-    QString _setdir;
     QString _base;
     QString _desk;
     QString _images;
@@ -262,13 +285,20 @@ struct XwnSet
     QString  _cmd;
     QString  _icon;
     QString  _caticon;
-    QPoint    _icwh;
+    QPoint    _imgdim;
     QString  _hidepanels;
     QString  _font; // Font="10,75,1,arial"   size, weight, bold, face
 
-    bool     Load(MySett& s)
+    bool     load_config(MySett& s)
     {
         bool ingroup = false;
+
+        if(s.value("disabled").toBool()==true)
+        {
+            return false;
+        }
+
+
         _pname = s.value("Pname").toString();
         if(_pname.isEmpty())
         {
@@ -294,7 +324,7 @@ struct XwnSet
         _pname = s.value("Pname").toString();
         _owndesktop= s.value("OwnDesktop").toBool();
         _hidden= s.value("Hidden").toBool();
-        _icwh = s.value("Isize").toPoint();
+        _imgdim = s.value("Isize").toPoint();
         _rpos = s.value("Xrect").toInt();
         _icon = s.value("Icon").toString();
         _caticon = s.value("CatIcon").toString();

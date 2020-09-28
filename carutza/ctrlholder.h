@@ -55,9 +55,10 @@ public:
 protected:
     virtual void _config_ui();
     virtual void _load_controls(const QString& folder);
-    void        _layout_it();
-    void        _add_widget(QWidget* pw, int align);
-
+    void        _layout_it(int,int, const QRect& maxw);
+    void        _add_widget(QWidget* pw, const QPoint& icx,
+                            int col, int row=0, int al=Qt::AlignLeft);
+    void        _re_stretch();
 protected:
     void paintEvent(QPaintEvent *event);
 
@@ -68,8 +69,12 @@ public slots:
 protected:
     Imagez*   _q_pixmap;
     CfgPanel* _pcfg;
-    QLayout*  _layout;
+    QGridLayout*  _layout = nullptr;
     std::vector<QWidget*>   _butons;
+    int             _layerwidth=0;
+    int             _lefts;
+    int             _rights;
+    int             _leftovers=0;
 };
 
 #endif

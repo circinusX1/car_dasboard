@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     char cwd[256]; ::getcwd(cwd,255);
     QString env = cwd; env+="/";
     QString file=env;
-    file.append("config/carutza.kiss");
+    file.append("./carutza.kiss");
 
     if(0!=::access(file.toUtf8(),0))
     {

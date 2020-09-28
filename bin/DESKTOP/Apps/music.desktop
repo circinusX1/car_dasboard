@@ -1,0 +1,10 @@
+{
+Pname{audacious}
+Name{music}
+Exec{audacious}
+Xrect{0}
+Icon{mediaplayer}
+}
+
+
+
