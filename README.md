@@ -57,6 +57,10 @@ On a PC where already there is a desktop runnning
 
 ```
 sudo apt-get  install gnuradio
+sudo apt-get install pavucontrol pulseaudio-module-gconf pulseaudio-module-zeroconf
+cd third 
+qmake && make clean && make && sudo make install
+
 ```
 
 #### Navigaton
