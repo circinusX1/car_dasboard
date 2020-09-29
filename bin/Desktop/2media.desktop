@@ -1,7 +1,0 @@
-Pname=streamtuner;
-Name="tuner";
-Exec=streamtuner;
-Xrect=0;
-Icon=media.png;
-
-

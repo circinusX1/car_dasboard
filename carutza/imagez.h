@@ -24,6 +24,7 @@ Project:    CARUTZA
 #define IMAGEZ_H
 
 #include <QPixmap>
+#include <QIcon>
 
 class Imagez : public QPixmap
 {
@@ -31,12 +32,15 @@ public:
     explicit Imagez(int x, int y, int format):QPixmap(x,y){Q_UNUSED(format);};
     explicit Imagez(const char* path, const char* image);
     explicit Imagez();
+    explicit Imagez(const QPixmap& p);
     virtual ~Imagez();
     bool load_image(const char* path, const char* image, bool force=true, const char *format = 0,
                     Qt::ImageConversionFlags flags = Qt::AutoColor);
     bool load_images(const char*, ...);
     Imagez& operator=(const QPixmap& p){return (Imagez&)QPixmap::operator=(p);}
     bool fromrgb(int rgb);
+    static void adjust(QImage *image, int factor);
+    static QPixmap new_pixmap(const QPixmap& pixmap, QIcon::Mode m);
 private:
 
 };

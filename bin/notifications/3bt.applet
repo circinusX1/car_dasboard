@@ -1,8 +1,0 @@
-{
-Pname{blueman-manager}
-Name{bt}
-Icon{bbt.png}
-Exec{blueman-manager}
-align{1}
-Isize{64,30}
-}

@@ -1,9 +1,0 @@
-Pname=rssnews;
-Name="newsx";
-Exec=rssnews;
-Xrect=0;
-Icon=rss;
-Xframe=1;
-
-
-

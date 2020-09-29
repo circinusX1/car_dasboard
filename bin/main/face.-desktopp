@@ -1,7 +1,0 @@
-pname=facerec
-Name=" "
-Exec="sudo /home/linaro/octopus/cognivue/facerec"
-Xrect=0
-icon=face
-
-

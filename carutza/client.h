@@ -143,6 +143,7 @@ public:
     QPoint  _mousexy;
     bool    _resizeds;
     XwnSet  _set;
+
 };
 
 #endif

@@ -10,7 +10,7 @@ MCOOKIE=$(mcookie)
 
 DISPLAY=:0
 export DISPLAY=:0
-Xephyr -ac -screen 780x900 -br -reset :1 &
+Xephyr -ac -screen 780x700 -br -reset :1 &
 #Xephyr -ac -screen 780x900 -br -reset -terminate :1 &
 sleep 4
 xauth add $(hostname)/unix:1 . $MCOOKIE

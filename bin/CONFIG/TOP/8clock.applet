@@ -1,0 +1,9 @@
+{
+    Pname       {&clock_applet}
+    Name        {clock}
+    Isize       {240,30}
+    bckcolor    {1}
+    fontcolor   {65535}
+    Icon=Clock-2-icon.png;
+    align       {2}
+}

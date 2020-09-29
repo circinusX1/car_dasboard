@@ -37,13 +37,17 @@ Appman::Appman(Panel *p, const QPoint& size, const XwnSet& set, QWidget *parent)
 {
     PA->set_appman(this);
     setFixedSize(size.x(),size.y());
-    set_image(CFG(_images),set._icon);
+    set_image(CFG(_images).toUtf8(),set._icon);
 }
 
 /*-----------------------------------------------------------------------------
 -----------------------------------------------------------------------------*/
 Appman::~Appman()
 {
+    for(auto &a : _clients)
+    {
+        delete a;
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -62,12 +66,14 @@ void Appman::on_click()
 -----------------------------------------------------------------------------*/
 bool Appman::kill_active_app()
 {
-    cond_if(!_pactive, return false);
-    cond_if(_pactive->_set._killapp==0, return false );
+    if(!_pactive)
+            return false;
+    if(_pactive->_set._killapp==0)
+        return false ;
 
     QString  k = "kill "+QString::number( _pactive->_pid);
-    system(k.toUtf8());
-    //remove_xcli(_pactive); leave it naturally
+    system((const char*)k.toUtf8());
+    remove_xcli(_pactive); //leave it naturally
     _pactive=0;
     return true;
 }
@@ -121,7 +127,7 @@ bool Appman::set_active_xwin( XClient *c, bool oneinst)
     {
         PA->show_panels(true);
         //hide();
-        //set_bstate(S_DISABLED);
+        //set_bstate(QIcon::Disabled);
         //this->setName("");
         _pactive=0;
         QTimer::singleShot(200, this, SLOT(slot_refresh()));
@@ -207,12 +213,12 @@ void  Appman::slot_refresh()
     if(!_pactive)
     {
         this->setText("");
-        set_bstate(S_DISABLED);
+        set_bstate(QIcon::Disabled);
     }
     else if( _pactive->_set._noclose)
-        set_bstate(S_DISABLED);
+        set_bstate(QIcon::Disabled);
     else
-        set_bstate(S_NORMAL);
+        set_bstate(QIcon::Normal);
     PA->refresh_buts();
 
     cond_if((_pactive && !_pactive->_set._owndesktop), PA->top_up_panels(_pactive));
@@ -247,7 +253,7 @@ void  Appman::rescan_visibilities(XClient* ontop)
         XClient* pc = (*it);
         if(ontop != pc)
         {
-            if(pc->_set._rpos == ontop->_set._rpos)
+            if(pc->_set._xrect == ontop->_set._xrect)
             {
                 //pc->unmap();
                 pc->hide();
@@ -280,8 +286,8 @@ void  Appman::_priv_kill_app(XClient* pc)
         kill+= QString::number(pc->_pid);
         for(int k=0;k<2;++k)
         {
-            system(kill.toUtf8());
-            usleep(100000);
+            system((const char*)kill.toUtf8());
+            usleep(0xFFFF);
         }
     }
     if(PA->is_process(pc->_set))
@@ -289,8 +295,8 @@ void  Appman::_priv_kill_app(XClient* pc)
         kill = "pkill " + pc->_set._pname;
         for(int k=0;k<3;++k)
         {
-            system(kill.toUtf8());
-            usleep(100000);
+            system((const char*)kill.toUtf8());
+            usleep(0xFFFF);
         }
     }
     if(!PA->is_process(pc->_set))

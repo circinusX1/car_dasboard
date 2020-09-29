@@ -35,12 +35,7 @@ class OdButton : public QToolButton
 {
 	Q_OBJECT
 public:
-    enum E_BSTATE{           //a long bitmap
-        S_NORMAL=0x0,
-        S_ACTIVE=0x1,
-        S_DISABLED=0x4,
-        S_SELECTED=0x8,
-    };
+
 
     enum E_BTYPE {
                     IMG_BUTON=0x1,
@@ -51,12 +46,11 @@ public:
 	virtual ~OdButton(void);
     const   XwnSet& xset()const{return _set;}
     bool    set_image(const char* path, const  char* imagefile);
-
     bool    set_cat_image(const char* path, const char* imagefile);
-
-    void    set_bstate(OdButton::E_BSTATE s){_state=s; update();}
+    void    set_bstate(QIcon::Mode s){_state=s; update();}
     void    set_font_size(const QSize& sz);
     void    refresh();
+    CtrlHolder* parent()const{return _panel;}
 
 	virtual bool is_activable();
 	virtual void activate();
@@ -90,15 +84,15 @@ protected:
 protected:
     XwnSet      _set;
     int         _btype;
-    E_BSTATE    _state;
+    QIcon::Mode _state;
     QIcon       _icon;
     QIcon       _caticon;
-    QPoint       _initsz;
+    QPoint      _initsz;
     QPoint      _presspt;
     QPoint      _initp;
     bool        _abtomove;
     bool        _moved;
-
+    CtrlHolder* _panel=nullptr;
 };
 
 #endif

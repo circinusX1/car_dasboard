@@ -26,6 +26,7 @@ Project:    CARUTZA
 #include <QRect>
 #include <QFile>
 #include <QStringList>
+#include <QColor>
 #include <stdlib.h>
 #include <vector>
 #include "akajson.h"
@@ -88,6 +89,14 @@ public:
         int toInt()const{
             return std::stod(_s[0]);
         }
+        QColor toColor()const{
+            QColor r;
+            r.setRed(std::stod(_s[0]));
+            r.setGreen(std::stod(_s[1]));
+            r.setBlue(std::stod(_s[2]));
+            r.setAlpha(std::stod(_s[3]));
+            return r;
+        }
         QRect toRect()const{
             QRect r;
             r.setX(std::stod(_s[0]));
@@ -112,7 +121,13 @@ public:
         return QString(_curent->name().c_str());
     }
 
+    bool pnode(const char* key)
+    {
+        return _curent->pnode(key)->type()!=Node::eNULL;
+    }
+
     Typoc value(const char* key, int dev=0){
+        Q_UNUSED(dev);
         const Node* pn = _curent->pnode(key);
         if(pn==nullptr)
         {
@@ -122,6 +137,7 @@ public:
     }
 
     const Typoc value(const QString& key, int dev0=0){
+        Q_UNUSED(dev0);
         const Node* pn = _curent->pnode((const char*)key.toUtf8());
         return Typoc(pn);
     }
@@ -139,7 +155,7 @@ public:
 
     bool  goto_child(int index)
     {
-        if(_curent->count()>index)
+        if(_curent->count()>(size_t)index)
         {
             _curent = _curent->pnode(index);
             return true;
@@ -199,7 +215,6 @@ public:
     void  load_panels(std::vector<Panel*>& panels);
     const QString& base()const{return _base;}
     const QString& home()const{return _workdir;}
-    const QString& desktop()const{return  _desk;}
     const QString& images()const{return _images;}
     const QPoint& drect()const{return _drect;}
     void    startapps();
@@ -219,7 +234,6 @@ private:
 public:
     QString _workdir;
     QString _base;
-    QString _desk;
     QString _images;
     QString _theme;
     QString _wallpaper;
@@ -245,13 +259,11 @@ struct XwnSet
         WIG_CONTAINER,
         WIG_BACK,
     }WIDGET_TYPE;
-    XwnSet():_frame(0),
+    XwnSet():_frame(false),
             _noclose(0),
             _owndesktop(0),
             _hidden(0),
-            _bckcolor(0),
-            _fontcolor(0),
-            _rpos(0),
+            _xrect(0),
             _align(0),
             _ialign(0),
             _talign(0),
@@ -262,30 +274,33 @@ struct XwnSet
             _state(8),
             _wt(WIG_DESKTOP)
     {
+        _bckcolor.setRgb(0,0,0,255);
+        _fontcolor.setRgb(255,255,255,255);
     }
     bool     _frame;
     bool     _noclose;
     bool     _owndesktop;
     bool     _hidden;
-    int      _bckcolor;
-    int      _fontcolor;
-    int      _rpos;
+    QColor      _bckcolor;
+    QColor      _fontcolor;
+    int      _xrect;
     int      _align;
     int      _ialign;
     int      _talign;
     bool     _nopush;
     bool     _bshowrun;
-    int     _hoffset;
-    bool    _killapp;
-    int     _state;
+    int      _hoffset;
+    bool     _killapp;
+    int      _state;
     WIDGET_TYPE _wt;
+    QString  _desk_file;
     QString  _name;
     QString  _pname;
     QRect    _rect;
     QString  _cmd;
     QString  _icon;
     QString  _caticon;
-    QPoint    _imgdim;
+    QPoint   _imgdim;
     QString  _hidepanels;
     QString  _font; // Font="10,75,1,arial"   size, weight, bold, face
 
@@ -297,8 +312,7 @@ struct XwnSet
         {
             return false;
         }
-
-
+        //_desk_file = s.home();
         _pname = s.value("Pname").toString();
         if(_pname.isEmpty())
         {
@@ -325,7 +339,7 @@ struct XwnSet
         _owndesktop= s.value("OwnDesktop").toBool();
         _hidden= s.value("Hidden").toBool();
         _imgdim = s.value("Isize").toPoint();
-        _rpos = s.value("Xrect").toInt();
+        _xrect = s.value("Xrect").toInt();
         _icon = s.value("Icon").toString();
         _caticon = s.value("CatIcon").toString();
         _frame = s.value("Xframe").toBool();
@@ -336,8 +350,10 @@ struct XwnSet
         _hoffset = s.value("Hoffset").toInt();
         _killapp = s.value("Killapp").toInt();
         //state attribs
-        _bckcolor= s.value("bckcolor").toInt();
-        _fontcolor= s.value("fontcolor").toInt();
+        if(s.pnode("BgColor"))
+            _bckcolor= s.value("BgColor").toColor();
+        if(s.pnode("BgColor"))
+            _fontcolor= s.value("BgColor").toColor();
         _align = s.value("align").toInt();
         _ialign = s.value("ialign").toInt();
         _talign = s.value("talign").toInt();

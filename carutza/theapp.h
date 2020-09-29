@@ -81,8 +81,8 @@ public:
 	void app_set_click_rule(bool);
     void runapp(const XwnSet& appname);
     void runintern(const XwnSet& xset);
-    bool is_process( const XwnSet& xset);
-    bool is_process( const QString& pname);
+    int is_process( const XwnSet& xset);
+    int is_process( const QString& pname);
     void sys_menu_logout();
 	void sys_menu_sleep();
 	void sys_menu_restart();
@@ -120,6 +120,9 @@ public:
     void refresh_buts();
     Panel* get_panel(const QString& p);
     void   top_up_panels(const XClient* pcli);
+    const std::vector<Panel*>& panels()const;
+    void set_curent(OdButton* pu){_curent_but=pu;}
+    const OdButton* get_curent()const{return _curent_but;}
 private:
     bool    _is_running(const XwnSet& appname);
     QString _popen(const char* cmd, const char* filter);
@@ -161,9 +164,10 @@ private:
     bool                _bshow;
     DbusIpc             _ipc;
     const XwnSet*       _pset_torun; // slot mismatch
-
+    OdButton*           _curent_but = nullptr;
 public:
     bool                _mdown=false;
+    bool                _inited = false;
     static Desktop*     __Dsk();
     static QApplication::EventFilter _default_x11;
 };

@@ -36,10 +36,6 @@ Project:    CARUTZA
   -------------------------------------------------------------------------------------*/
 MySett::MySett(const QString &fileName, bool global):_killdelay(100)
 {
-    char pw[256];
-    ::getcwd(pw, 255);
-    _workdir = pw;
-    _workdir += "/";
     if(::access((const char*)fileName.toUtf8(),0)!=0)
     {
         return;
@@ -48,86 +44,72 @@ MySett::MySett(const QString &fileName, bool global):_killdelay(100)
     {
         return;
     }
-    _curent = this->root();
 
-    _base=this->value("dashboard").toString();
+    _workdir = QDir::currentPath();
+    _workdir += "/CONFIG/";
+
+    _curent = this->root();
+    _base=this->value("config").toString();
+    mangle(_base);
+
     _fontpercent=this->value("font_percent").toInt();
     _killdelay=this->value("kill_delay").toInt();
-    mangle(_base);
+
     if(global)
     {
-        _desk = _base+"Desktop/";
         _images = _base+"icons/";
-    }
-    _drect.setX(PA->desktop()->width());
-    _drect.setY(PA->desktop()->height());
-    _displays = this->value("displays").toInt();
-    _display = this->value("display").toInt();
-
-    this->beginGroup("panels");
-    int count = this->count();
-    int posy = 0;
-    for(int k=0;k<count;++k)
-    {
-        CfgPanel    pset;
-        if(this->goto_child(k))
+        _drect.setX(PA->desktop()->width());
+        _drect.setY(PA->desktop()->height());
+        _displays = this->value("displays").toInt();
+        _display = this->value("display").toInt();
+        this->beginGroup("panels");
+        int count = this->count();
+        int posy = 0;
+        for(int k=0;k<count;++k)
         {
-            if(this->value("disabled").toBool()==false)
+            CfgPanel    pset;
+            if(this->goto_child(k))
             {
-                pset._name    = this->key();
-                OOO << "reading: " << pset._name << "\n";
-                pset._rect = this->value("position").toRect();
-
-                if(pset._rect.left()<0)
-                    pset._rect.setLeft(0);
-                int tp = pset._rect.top();
-                if(tp<0){
-                    if(tp==-3){
-                        pset._rect.moveTo(0,drect().y()-pset._rect.height());
-                    }
-                    else{
-                        pset._rect.moveTo(0,posy);
-                    }
-                }
-                if(pset._rect.right()<0)
-                    pset._rect.setWidth(this->_drect.x());
-                if(pset._rect.bottom()<0){
-                    pset._rect.setHeight(this->_drect.y()-posy);
-                }
-
-                int x,y,w,h;
-                x=pset._rect.left();
-                y=pset._rect.top();
-                w=pset._rect.width();
-                h=pset._rect.height();
-
-
-                pset._icons   = this->value("icons").toPoint();
-
-                pset._align   = this->value("align").toInt();
-
-                pset._notify  = this->value("notify").toBool();
-                pset._arrange = this->value("arrange").toInt();
-                pset._spacing = this->value("spacing").toInt();
-                pset._bgimage = this->value("bgimage").toString();
-                if(!pset._bgimage.isEmpty())
+                if(this->value("disabled").toBool()==false)
                 {
-                    if(pset._bgimage[0]=='/')
-                    {
-                        //absolute path
-                        QString img = pset._bgimage;
-                        pset._bgimage = _workdir + pset._bgimage;
+                    pset._name    = this->key();
+                    OOO << "reading: " << pset._name << "\n";
+                    pset._rect = this->value("position").toRect();
+
+                    if(pset._rect.left()<0)
+                        pset._rect.setLeft(0);
+                    int tp = pset._rect.top();
+                    if(tp<0){
+                        if(tp==-3){
+                            pset._rect.moveTo(0,drect().y()-pset._rect.height());
+                        }
+                        else{
+                            pset._rect.moveTo(0,posy);
+                        }
                     }
+                    if(pset._rect.right()<0)
+                        pset._rect.setWidth(this->_drect.x());
+                    if(pset._rect.bottom()<0){
+                        pset._rect.setHeight(this->_drect.y()-posy);
+                    }
+
+                    pset._icons   = this->value("icons").toPoint();
+
+                    pset._align   = this->value("align").toInt();
+
+                    pset._notify  = this->value("notify").toBool();
+                    pset._arrange = this->value("arrange").toInt();
+                    pset._spacing = this->value("spacing").toInt();
+                    pset._bgimage = this->value("bgimage").toString();
+                    _panels[pset._name]   = pset;
+                    posy += pset._rect.height();
                 }
-                _panels[pset._name]   = pset;
-                posy += pset._rect.height();
+                this->goto_parent();
             }
-            this->goto_parent();
+
         }
-
+        this->endGroup();
     }
-    this->endGroup();
-
     /*
     QString vn;
     _theme =  _images + "theme/" + value("theme").toString()+"/";    //=32
@@ -199,7 +181,7 @@ void MySett::startapps()
         }
     }
     apps += "&";
-    system(apps.toUtf8());
+    system((const char*)apps.toUtf8());
 }
 
 /*--------------------------------------------------------------------------------------
@@ -213,7 +195,7 @@ void MySett::prestartapps()
         QString app = lapps.at(k);
         mangle(app);
         app += " &";
-        system(apps.toUtf8());
+        system((const char*)apps.toUtf8());
     }
 }
 
@@ -230,13 +212,9 @@ void MySett::mangle(QString& s)
 {
     if(s.contains("$PWD"))
     {
-        s.replace("$PWD", _workdir);
+        s.replace("$PWD", QDir::currentPath());
     }
-
-    else if(s.contains("$THEME"))
-    {
-        s.replace("$THEME", _theme);
-    }
+    s.replace("//", "/");
 }
 
 /*--------------------------------------------------------------------------------------
@@ -285,42 +263,37 @@ void MySett::load_panels(std::vector<Panel*>& panels)
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
-bool MySett::find_widget(const QString& name, XwnSet& outval)
+bool MySett::find_widget(const QString& name,
+                         XwnSet& outval)
 {
-    if(name.length()==0)
-    {
-        return false;
+    const OdButton* cb = PA->get_curent();
+    if(cb){
+        outval = cb->xset();
     }
-    QDir            dir("./");
-    QFileInfoList   files = dir.entryInfoList();
-    foreach(const QFileInfo &fi, files)
+    else
     {
-        if(fi.fileName().at(0)=='.')
-            continue;
-        QString     sfile = fi.absoluteFilePath();
-        QString     bn = fi.baseName();
-        if(!fi.isDir() &&
-                (sfile.endsWith(".widget") || sfile.endsWith(".desktop") || sfile.endsWith(".desktopp")) )
+        const std::vector<Panel*>& pas = PA->panels();
+        for(const auto& p : pas)
         {
-            MySett    df(sfile);
-            if(!df.ok())continue;
-            QString   pname = df.value("Pname").toString();
-            if(!pname.isEmpty() && (pname == name || name.contains(pname)))
+            OdButton* pod =  p->get_widget(name);
+            if(pod)
             {
-                outval.load_config(df);
-                qDebug()<< outval._name << outval._rect.left() << "," <<outval._rect.top();
+                outval = pod->xset();
                 return true;
             }
         }
-    }
-    //load default rect
-    outval._rect.setCoords(0,
-                           top_gap(),
-                           drect().x(),
-                           drect().y()-bottom_gap());
 
-    outval._rpos=0;
+
+        //load default rect
+        outval._rect.setCoords(0,
+                               top_gap(),
+                               drect().x(),
+                               drect().y()-bottom_gap());
+
+        outval._xrect=0;
+    }
     return true;
+
 }
 
 /*--------------------------------------------------------------------------------------

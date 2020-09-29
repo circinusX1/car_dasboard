@@ -25,9 +25,9 @@ public:
     {
     public:
         friend class Cbdler;
-
-    protected:
         enum E_TYPE{eNULL,eNODE,eLEAF};
+    protected:
+
         Node(Node::E_TYPE t, const std::string& name):_name(name),_type(t){
             _parent=nullptr;
         }
@@ -146,6 +146,10 @@ protected:
         }
 
 public:
+
+        Node::E_TYPE type()const{
+            return this->_type;
+        }
         const std::string name()const{
             return this->_name;
         }
@@ -272,7 +276,6 @@ public:
 private:
     Node* _parse(const char* fname)
     {
-        char  p    = 0;
         int   line = 1;
         int   oc   = 0;
         int   eq   = 0;
@@ -287,7 +290,6 @@ private:
             while (std::getline(fi, _line))
             {
                 ++line;
-                char prev = 0;
                 std::istringstream iss(_line);
                 if(!escaping && !longstr){
                     if(_line.empty() || _line[0]=='#')
@@ -338,6 +340,7 @@ private:
                             break;
                         }
                         eq=true;
+                        [[fallthrough]];
                     case '{':
                         if(escaping){
                              _string+=f;

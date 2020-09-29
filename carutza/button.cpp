@@ -29,14 +29,17 @@ Project:    CARUTZA
 
 /*-----------------------------------------------------------------------------
 -----------------------------------------------------------------------------*/
-OdButton::OdButton(CtrlHolder *p, const QPoint& sz,const XwnSet& set, QWidget *parent):
+OdButton::OdButton(CtrlHolder *p,
+                   const QPoint& sz,
+                   const XwnSet& set,
+                   QWidget *parent):
     QToolButton(parent),_set(set),
                         _btype(TEXT_BUTON),
-                        _state(S_NORMAL),
+                        _state(QIcon::Normal),
                         _initsz(sz),
-                        _abtomove(false)
+                        _abtomove(false),
+                        _panel(p)
 {
-    Q_UNUSED(p);
     cond_if(_initsz.x()<=0, _initsz=QPoint(64,64));
     setFixedSize(sz.x(), sz.y());
     setText(set._name);
@@ -48,7 +51,8 @@ OdButton::OdButton(CtrlHolder *p, const QPoint& sz,const XwnSet& set, QWidget *p
         QStringList lf = _set._font.split(',');
         for(int k=0;k<lf.size();++k)
         {
-            if(lf[k]=="0")   lf[k]="16";
+           if(lf[k]=="0")
+                lf[k]="22";
             switch(k)
             {
                 case 0:
@@ -78,10 +82,7 @@ OdButton::OdButton(CtrlHolder *p, const QPoint& sz,const XwnSet& set, QWidget *p
         f.setPointSize(fsz);
     }
     setFont(f);
-    if(set._state>0)
-    {
-        set_bstate((OdButton::E_BSTATE)set._state);
-    }
+    set_bstate((QIcon::Mode)set._state);
 }
 
 /*-----------------------------------------------------------------------------
@@ -95,7 +96,7 @@ OdButton::~OdButton()
 bool OdButton::set_cat_image(const char* path, const char* imagefile)
 {
     Imagez  ipixa;
-    if(imagefile=="0")
+    if(imagefile[0]=='0')
         return false;
     if(ipixa.load_image(path,imagefile))
     {
@@ -120,14 +121,15 @@ bool OdButton::set_image(const char* path, const char* imagefile)
         return false;
     if(!ipixa.load_image(path,imagefile))
     {
-        QPixmap pixmap(_initsz.x()-2,_initsz.y()-2);
-
+        QPixmap pixmap(_initsz.x(),_initsz.y());
         pixmap.fill(QColor(192,192,192));
-        _icon.addPixmap(pixmap, QIcon::Normal, QIcon::Off);
+        _icon.addPixmap(pixmap, QIcon::Normal, QIcon::On);
         textonly=true;
     }
     else
-        _icon.addPixmap(ipixa, QIcon::Normal, QIcon::Off);
+    {
+        _icon.addPixmap(ipixa, QIcon::Normal, QIcon::On);
+    }
 
     for(int c = 0; images[c]; ++c)
     {
@@ -148,11 +150,22 @@ bool OdButton::set_image(const char* path, const char* imagefile)
 
         if(ipix.load_image(path, fname,false))
         {
-            _icon.addPixmap(ipix, (QIcon::Mode)states[c], QIcon::Off);
+            _icon.addPixmap(ipix, (QIcon::Mode)states[c], QIcon::On);
         }
         else
         {
-            _icon.addPixmap(ipixa, (QIcon::Mode)states[c], QIcon::Off);
+            QPixmap pix = ipix;
+            QIcon::Mode mode;
+            switch(images[c])
+            {
+                case 'A':
+                    pix=Imagez::new_pixmap(ipix, mode=QIcon::Active); break;
+                case 'D':
+                    pix=Imagez::new_pixmap(ipix, mode=QIcon::Disabled); break;
+                case 'S':
+                    pix=Imagez::new_pixmap(ipix, mode=QIcon::Selected); break;
+            }
+            _icon.addPixmap(pix, (QIcon::Mode)states[c], QIcon::On);
         }
     }
     cond_if(!textonly, _btype|=(int)OdButton::IMG_BUTON);
@@ -163,14 +176,14 @@ bool OdButton::set_image(const char* path, const char* imagefile)
 -----------------------------------------------------------------------------*/
 void OdButton::_draw_content()
 {
-    if(_set._bckcolor<=0)
+    if(_set._bckcolor.alpha()==255)
     {
         QPainter painter(this);
         QRect    rect = painter.window();
         QColor   base;
 
         painter.setRenderHint(QPainter::Antialiasing);
-        if (_state & S_SELECTED)
+        if (_state == QIcon::Selected)
         {
             QLinearGradient linearGrad(QPointF(0, rect.top()), QPointF(0, rect.top() + height()));
 
@@ -179,7 +192,7 @@ void OdButton::_draw_content()
             linearGrad.setColorAt(1, base.lighter(32));
             painter.fillRect(0, rect.top(), width(), height(), linearGrad);
         }
-        else if (_state & S_ACTIVE)
+        else if (_state == QIcon::Active)
         {
             QLinearGradient linearGrad(QPointF(0, rect.top()), QPointF(0, rect.top() + height()));
 
@@ -188,7 +201,7 @@ void OdButton::_draw_content()
             linearGrad.setColorAt(1, base.darker(128));
             painter.fillRect(0, rect.top(), width(), height(), linearGrad);
         }
-        else if (_state & S_DISABLED)
+        else if (_state == QIcon::Disabled)
         {
             QLinearGradient linearGrad(QPointF(0, rect.top()), QPointF(0, rect.top() + height()));
 
@@ -210,7 +223,7 @@ void OdButton::_draw_content()
     {
         QPainter painter(this);
         QRect    rect = painter.window();
-        QColor   base(QRgb(_set._bckcolor));
+        QColor   base(_set._bckcolor);
 
         painter.setRenderHint(QPainter::Antialiasing);
         painter.fillRect(0, rect.top(), width(), height(), base);
@@ -226,21 +239,21 @@ void OdButton::_draw_text()
     QRect    offset(rect.left()+1, rect.top()+2, rect.width()-1, rect.height()-2);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    if(_set._fontcolor<=0)
+    if(_set._fontcolor.alpha()==255)
     {
-        if (_state & S_SELECTED)
+        if (_state == QIcon::Selected)
         {
             //mco-mco
             painter.setPen(QColor(255,0,0)); // palette().highlightedText().color());
         }
         else
         {
-            painter.setPen(QColor(0,0,0));
+            painter.setPen(QColor(128,0,0));
         }
     }
     else
     {
-        painter.setPen(QColor(QRgb(_set._fontcolor)));
+        painter.setPen(_set._fontcolor);
     }
     if(_btype & IMG_BUTON)//has image
     {
@@ -264,38 +277,55 @@ void OdButton::_draw_image()
 {
     QPainter painter(this);
     QRect    rect(painter.window());
-    QSize    sz = _icon.actualSize(this->size(),QIcon::Normal, QIcon::Off);
-    int      x = (_initsz.x()-sz.width())/2;
-    int      y = (_initsz.y()-sz.height())/2;
+    QSize    icsz =   _icon.actualSize(this->size(),QIcon::Normal, QIcon::Off);
+    QPoint   sz = _set._imgdim; // _icon.actualSize(this->size(),QIcon::Normal, QIcon::Off);
+    int      x = (_initsz.x()-sz.x())/2;
+    int      y = (_initsz.y()-sz.y())/2;
     int      icstate[]= {QIcon::Normal,
-                         QIcon::Active, 0, 0,
-                         QIcon::Disabled, 0, 0, 0,
+                         QIcon::Active,
+                         QIcon::Disabled,
                          QIcon::Selected};
 
     //if(_state!=0) {x-=1;y-=1;}
 
     if(_set._ialign<=0)
     {
-        _icon.paint(&painter, x, y, sz.width(), sz.height(), Qt::AlignCenter,
-                    (QIcon::Mode)icstate[_state], QIcon::Off);
+        if(icsz.width()!=sz.x())
+        {
+            QPixmap pm = _icon.pixmap(sz.x(),sz.y(),(QIcon::Mode)icstate[_state]);
+            painter.drawPixmap(x,y, sz.x(), sz.y(), pm);
+        }
+        else {
+            _icon.paint(&painter, x, y, sz.x(), sz.y(), Qt::AlignCenter,
+                        (QIcon::Mode)icstate[_state], QIcon::Off);
+
+        }
     }
     else
     {
-        _icon.paint(&painter, x, y, sz.width(), sz.height(), (Qt::AlignmentFlag)_set._ialign,
-                    (QIcon::Mode)icstate[_state], QIcon::Off);
+        if(icsz.width()!=sz.x())
+        {
+            QPixmap pm = _icon.pixmap(sz.x(),sz.y());
+            painter.drawPixmap(x,y, sz.x(), sz.y(), pm);
+        }
+        else {
+            _icon.paint(&painter, x, y, sz.x(), sz.y(), (Qt::AlignmentFlag)_set._ialign,
+                        (QIcon::Mode)icstate[_state], QIcon::Off);
+        }
     }
 
     if(!_caticon.isNull())
     {
         QSize    sz = _caticon.actualSize(this->size(),QIcon::Normal, QIcon::Off);
 
-         _caticon.paint(&painter,rect.width()-sz.width(),
-                                 0,
-                                 sz.width(),
-                                 sz.height(),
-                                 Qt::AlignCenter,
-                                 QIcon::Normal,
-                                 QIcon::Off);
+         _caticon.paint(&painter,
+                        rect.width()-sz.width()/3,
+                         rect.height()-sz.height()/3,
+                         sz.width()/3,
+                         sz.height()/3,
+                         Qt::AlignLeft,
+                         QIcon::Normal,
+                         QIcon::Off);
     }
 }
 
@@ -313,8 +343,8 @@ void OdButton::paintEvent(QPaintEvent *)
 void OdButton::enterEvent(QEvent *)
 {
     cond_if(_set._nopush,return);
-    cond_if(_state & S_DISABLED,return);
-    set_bstate(S_ACTIVE);
+    cond_if(_state == QIcon::Disabled,return);
+    set_bstate(QIcon::Active);
 }
 
 /*--------------------------------------------------------------------------------------
@@ -322,18 +352,19 @@ void OdButton::enterEvent(QEvent *)
 void OdButton::leaveEvent(QEvent *)
 {
     cond_if(_set._nopush,return);
-    cond_if(_state & S_DISABLED,return);
-    set_bstate(S_NORMAL);
+    cond_if(_state == QIcon::Disabled,return);
+    set_bstate(QIcon::Normal);
 }
 
 /*--------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------*/
 void OdButton::mousePressEvent(QMouseEvent *event)
 {
+    PA->set_curent(this);
     cond_if(_set._nopush,return);
-    cond_if(_state & S_DISABLED,return);
+    cond_if(_state == QIcon::Disabled,return);
 
-    set_bstate(S_SELECTED);
+    set_bstate(QIcon::Selected);
     activate();
     QPoint pt = event->pos();
     _presspt  = pt;
@@ -354,7 +385,7 @@ void OdButton::mouseMoveEvent(QMouseEvent * event)
        (abs(_presspt.y()-event->pos().y()) > 16)))
     {
         _moved =true;
-        set_bstate(S_NORMAL);
+        set_bstate(QIcon::Normal);
         on_moving(event->pos().x()-_presspt.x(),
                   event->pos().y()-_presspt.y());
     }
@@ -365,9 +396,9 @@ void OdButton::mouseMoveEvent(QMouseEvent * event)
 void OdButton::mouseReleaseEvent(QMouseEvent *event)
 {
     cond_if(_set._nopush,return);
-    cond_if(_state & S_DISABLED,return);
+    cond_if(_state == QIcon::Disabled,return);
 
-    set_bstate(S_ACTIVE);
+    set_bstate(QIcon::Active);
     if(!_moved)
     {
         on_click(); //we need to activate the app
@@ -378,12 +409,14 @@ void OdButton::mouseReleaseEvent(QMouseEvent *event)
         on_moved(pos().x() - event->pos().x());
     }
     //QTimer::singleShot(100, this, SLOT(paint_again()));
+    //PA->set_curent(nullptr);
 }
 
 /*--------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------*/
 void OdButton::on_click()
 {
+    PA->set_curent(this);
     QApplication::beep ();
 }
 
@@ -403,21 +436,21 @@ void OdButton::on_moved(int)
 --------------------------------------------------------------------------------------*/
 bool OdButton::is_activable()
 {
-    return !(_state & S_DISABLED);
+    return (_state != QIcon::Disabled);
 }
 
 /*--------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------*/
 void OdButton::activate()
 {
-    cond_if(_state & S_DISABLED, return);
+    cond_if(_state & QIcon::Disabled, return);
     if(menu())
     {
         PA->wm_add_ignorewid(this->winId());
         PA->wm_add_ignorewid(menu()->winId());
         menu()->popup(this->mapToGlobal(QPoint(0, height())));
     }
-    set_bstate(S_SELECTED);
+    set_bstate(QIcon::Selected);
 }
 
 /*--------------------------------------------------------------------------------------
@@ -425,7 +458,7 @@ void OdButton::activate()
 void OdButton::deactivate()
 {
     cond_if(menu(), menu()->hide());
-    set_bstate(S_NORMAL);
+    set_bstate(QIcon::Normal);
 }
 
 /*--------------------------------------------------------------------------------------

@@ -30,6 +30,8 @@ extern TheApp *_PA;
 bool __initialized = false;
 
 void customHandler(QtMsgType type, const char* msg) {
+    Q_UNUSED(type);
+
     fprintf(stderr, "%s", msg);
     fflush(stderr);
 }
@@ -46,9 +48,9 @@ int main(int argc, char **argv)
 
     // test if we have settings file
     char cwd[256]; ::getcwd(cwd,255);
-    QString env = cwd; env+="/";
+    QString env = cwd;
     QString file=env;
-    file.append("./carutza.kiss");
+    file.append("/carutza.kiss");
 
     if(0!=::access(file.toUtf8(),0))
     {

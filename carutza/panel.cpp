@@ -71,7 +71,9 @@ Panel::~Panel(void)
   -------------------------------------------------------------------------------------*/
 void Panel::_config_ui(const std::vector<XwnSet>& buts)
 {
+    Q_UNUSED(buts);
     int dr = CFG(_drect).x();
+    Q_UNUSED(dr);
     int x = _pcfg->_rect.width(),y=_pcfg->_rect.height();
     this->resize(x, y);
     x = _pcfg->_rect.left(),y=_pcfg->_rect.top();
@@ -86,10 +88,10 @@ size_t  Panel::_load_buts(const QString& folder,
                           std::vector<XwnSet>& buts)
 {
     QString         fld;
-    if(folder.at(0)!='/')
-        fld = CFG(_workdir+folder);
-    else {
+    if(::access((const char*)folder,0)==0)
         fld = folder;
+    else {
+        fld = CFG(_workdir+folder);
     }
     QDir            dir(fld);
     QFileInfoList   files = dir.entryInfoList();
@@ -107,6 +109,7 @@ size_t  Panel::_load_buts(const QString& folder,
             XwnSet butset;
             if(df.ok() && butset.load_config(df))
             {
+                butset._desk_file = sfile;
                 butset._wt = XwnSet::WIG_DESKTOP;
                 cond_if(butset._imgdim.x()<=0,butset._imgdim = sz);
                 cond_if(butset._align==0,butset._align = _pcfg->_align);
@@ -120,6 +123,7 @@ size_t  Panel::_load_buts(const QString& folder,
             XwnSet butset;
             if(df.ok() && butset.load_config(df))
             {
+                butset._desk_file = sfile;
                 butset._wt = XwnSet::WIG_APPLET;
                 cond_if(butset._imgdim.x()<=0, butset._imgdim = sz);
                 cond_if(butset._align==0,butset._align = _pcfg->_align);
@@ -133,6 +137,7 @@ size_t  Panel::_load_buts(const QString& folder,
             XwnSet butset;
             if(df.ok() && butset.load_config(df))
             {
+                butset._desk_file = sfile;
                 butset._wt = XwnSet::WIG_SIGNAL;
                 cond_if(butset._imgdim.x()<=0, butset._imgdim = sz);
                 cond_if(butset._align==0,butset._align = _pcfg->_align);
@@ -147,6 +152,7 @@ size_t  Panel::_load_buts(const QString& folder,
                 MySett df(fn);
 
                 XwnSet butset;
+                butset._desk_file = sfile;
                 butset.load_config(df);
                 butset._pname=">";
                 butset._cmd=sfile; //which folder to change
@@ -177,8 +183,8 @@ void Panel::_load_controls(const QString& folder, std::vector<XwnSet>& buts)
 {
     QPoint              sz = _pcfg->_icons;
     int                 swidth=_parent_width();
-    int                 cols;
 
+    Q_UNUSED(swidth);
     cond_if(sz.x()<=0, sz= QPoint(_pcfg->_rect.width(),
                                   _pcfg->_rect.height()));
     _icwidth = sz.x();
@@ -204,7 +210,7 @@ void Panel::_load_controls(const QString& folder, std::vector<XwnSet>& buts)
         set._cmd = _basefolder;
         set._name = " ";
         LunchButt* pb = new LunchButt(this, sz, set);
-        pb->set_image("", "app_back.png");
+        pb->set_image(CFG(_base).toUtf8(), "app_back.png");
         connect(pb,SIGNAL(sig_clicked(OdButton*)),this,
                 SLOT(change_folder(OdButton*)));
         connect(pb,SIGNAL(sig_scrolled(int)),this,
@@ -214,9 +220,6 @@ void Panel::_load_controls(const QString& folder, std::vector<XwnSet>& buts)
         _add_widget(pb,set._imgdim, 0,0,Qt::AlignLeft);
         _butons.push_back(pb);
     }
-
-
-    int idx=0;
 
     std::vector<XwnSet>::iterator it = buts.begin();
 

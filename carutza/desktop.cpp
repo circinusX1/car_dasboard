@@ -54,7 +54,7 @@ void Desktop::init()
                 0,
                 CFG(_drect).x(),
                 CFG(_drect).y()-CFG(bottom_gap()));
-    load_wall_paper(CFG(_theme));
+    load_wall_paper(CFG(_images));
     this->lower();
     setWindowFlags(Qt::WindowStaysOnBottomHint);
 }

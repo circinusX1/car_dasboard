@@ -79,9 +79,15 @@ XClient::~XClient()
   -------------------------------------------------------------------------------------*/
 void XClient::init()
 {
+    _pid = get_proc_uid();
+    if(PA->_inited==false)
+    {
+        QString kill = "kill -9 "; kill+=QString::number(_pid);
+        ::system((const char*)kill.toUtf8());
+        return;
+    }
 
     XGrabServer(DPY());
-    _pid = get_proc_uid();
 
     XSetWindowBorderWidth(DPY(), _x_wid, 0);
     XSetWindowBorderWidth(DPY(), winId(), 0);
@@ -118,14 +124,18 @@ void XClient::init()
     get_protocols();
 
     int bx, by;
-    MySett::config().find_widget(_proc_name, _set);
+    CFG(find_widget(_proc_name, _set));
 
     bx      =   _set._rect.left();
     by      =   _set._rect.top();
     base_w  =   _set._rect.width();
     base_h  =   _set._rect.height();
     _xwclass = x11atoms::get_wxclass(_x_wid);
-    cond_if(_set._frame==false, _xwclass=x11atoms::Splash;)
+    if(_set._frame==false)
+        _xwclass=x11atoms::Splash;
+    else
+        _xwclass=x11atoms::Normal;
+
     if (_xwclass == x11atoms::Splash)
     {
         bx = by = 0;
@@ -173,9 +183,9 @@ void XClient::make_frame()
         return;
     }
 
-    _p_around_grid = new QGridLayout(this);
+    _p_around_grid = new QGridLayout(this,1,1);
     _p_around_grid->setContentsMargins(0, 0, 0, 0);
-    _p_around_grid->setSpacing(0);
+    _p_around_grid->setSpacing(10);
 
     FrmWinBorder *center = new FrmWinBorder(this);
     _p_around_grid->addWidget(center, 1, 1);
@@ -456,6 +466,7 @@ pid_t XClient::get_proc_uid()
     {
         QTextStream in(&inputFile);
         QString line = in.readLine();
+
         int dotp = line.indexOf('.');
         if(dotp)
         {
@@ -466,6 +477,7 @@ pid_t XClient::get_proc_uid()
         {
             _proc_name=line;
         }
+        _proc_name.remove(QChar::Null);
     }
     return pid;
 }
@@ -474,6 +486,7 @@ pid_t XClient::get_proc_uid()
   -------------------------------------------------------------------------------------*/
 void XClient::move_out(const QPoint& steps)
 {
+    Q_UNUSED(steps);
     /*
     XWindowAttributes xwa;
     XGetWindowAttributes(QX11Info::DPY(), _x_wid, &xwa);
@@ -650,7 +663,7 @@ void XClient::get_x11_icon(Pixmap icon, Pixmap mask)
     if (!XGetGeometry(DPY(), icon, &w, &ix, &iy, &iw, &ih, &bwidth, &depth))
     {
         // no icon defined - set default icon
-        _app_imagez = Imagez(CFG(_theme),"appicon.png");
+        _app_imagez = Imagez(CFG(_images),"appicon.png");
         return;
     }
     QPixmap pix(iw, ih);

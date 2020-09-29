@@ -55,8 +55,9 @@ public:
     bool start();
     void widget_clicked(const XwnSet& xset);
 private:
-    dashdbIfAdaptor* _padaptor;
-    DashServer*     _pserver;
+    DashServer*     _pserver=nullptr;
+    dashdbIfAdaptor* _padaptor=nullptr;
+
 };
 
 #endif // DBUSIPC_H

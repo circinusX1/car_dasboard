@@ -1,8 +1,0 @@
-pname=firefox
-Name=" "
-Exec="firefox http://www.pandora.com/"
-Xrect=0
-icon=pandora
-
-
-

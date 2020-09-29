@@ -1,0 +1,88 @@
+0.9.1:
+
+=> autodetection of available devices
+
+0.9.0:
+
+=> ported to Qt4
+=> implemented Qt4 requirements that all graphic ops are done in the GUI thread
+=> totally rewritten to get rid of the dead Video4Linux v.1
+=> support for cyrillic and Ukrainian
+=> updated Polish and Dutch translations
+=> changed format of config files to parameter=value to make them human-readable
+
+0.8.1:
+
+=> recording (corrected bugs)
+=> trayicon (corrected bugs)
+=> now working as recording tool or mixer (no radio tuner needed)
+
+0.8.0:
+
+=> SKINS
+=> Shortcuts
+
+0.7.0:
+
+=> lirc support
+=> new installation script
+
+0.6.0:
+
+=> new skin configuration
+=> recording
+=> visual effects
+
+0.5.0:
+
+=> new image of windows
+=> better settings
+=> tooltips
+
+0.4.4:
+
+=> corrected bugs
+
+0.4.2:
+
+=> corrected bugs
+=> corrected settings
+
+0.4.1:
+
+=> corrected bugs
+=> totally rewritten from KdeRadio to QtRadio now
+
+0.4.0:
+
+=> Other languages support
+=> Own window decoration (new Skin version)
+=> Docking
+=> Corrected volume setting
+=> Autoseeking stations
+
+0.3.0:
+
+=> Second version of Skin
+=> volume setting
+
+0.2.2:
+
+=> Skins (pixmap changing)
+=> v4l2
+
+0.2.0:
+
+=> Skins
+=> corrected BUG
+
+0.1.9:
+
+=> better editing station's name
+=> remembering last listened station
+=> setting MIN and MAX frequency
+=> very "easy" install srcipt
+
+0.1.0:
+
+=> editing station's name

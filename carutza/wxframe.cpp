@@ -28,11 +28,15 @@ xfwm4:      here and there source code
 matchbox:   here and there source code
 */
 
+#include <QIcon>
 #include "mysett.h"
 #include "wxframe.h"
 #include "x11atoms.h"
 #include "imagez.h"
 
+
+#define CAP_W 96
+#define CAP_H 96
 
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
@@ -81,32 +85,38 @@ FrmSysButs::FrmSysButs(int type, QWidget *parent)
 	: QLabel(parent),
       _type((eSYS_BUT_TYPE)type)
 {
-    setFixedHeight(20);
-	setFixedWidth(20);
+	int cxy = CFGX("caption_height").toInt();
+
+	setFixedHeight(cxy);
+	setFixedWidth(cxy);
 
     _state = _prev_state = EnormalState;
 	QString pathActive, pathNormal;
 	switch (_type) {
 		case CloseButton:
-            pathActive = "close-btn-_active_img.png";
-            pathNormal = "close-btn.png";
+			pathActive = "closewin.png";
+			pathNormal = "closewin.png";
 			break;
         case ExpandButton:
 		case MaximizeButton:
-            pathActive = "maximize-btn-_active_img.png";
-            pathNormal = "maximize-btn.png";
+			pathActive = "maximize.png";
+			pathNormal = "maximize.png";
 			break;
 		case MinimizeButton:
-            pathActive = "minimize-btn-_active_img.png";
-            pathNormal = "minimize-btn.png";
+			pathActive = "minimize.png";
+			pathNormal = "minimize.png";
 			break;
         default:
             break;
 	}
-    _norm_img = new Imagez(CFG(_theme).toUtf8(),  pathNormal.toUtf8());
-    _active_img = new Imagez(CFG(_theme).toUtf8(),  pathActive.toUtf8());
-    _incactive_img = new Imagez(CFG(_theme).toUtf8(),"win-btn-_incactive_img.png");
-	update();
+	//Normal, Disabled, Active, Selected }
+	if(pathNormal.length())
+	{
+		_norm_img = new Imagez(CFG(_images).toUtf8(),  pathNormal.toUtf8());
+		_active_img = new Imagez(Imagez::new_pixmap(*_norm_img, QIcon::Active));
+		_incactive_img = new Imagez(Imagez::new_pixmap(*_norm_img, QIcon::Disabled));
+		update();
+	}
 }
 
 /*--------------------------------------------------------------------------------------
@@ -131,11 +141,12 @@ void FrmSysButs::paintEvent(QPaintEvent *)
 	painter.setRenderHint(QPainter::Antialiasing);
 	QRect rect = painter.window();
 
+	int cxy = CFGX("caption_height").toInt();
 	// icon size is QSize(18, 17)
-	int top = (rect.height() - 17) / 2;
-	int left = (rect.width() - 18) / 2;
+	int top = (rect.height() - (cxy-1)) / 2;
+	int left = (rect.width() - cxy) / 2;
 
-	QRect pixRect(left, top, 18, 17);
+	QRect pixRect(left, top, cxy, cxy-1);
 
     if (_state == EnormalState) {
 		painter.drawPixmap(pixRect, *_norm_img);
@@ -178,8 +189,8 @@ XFrameBar::XFrameBar(QWidget *parent)
 	: QWidget(parent)
 {
 	_border_state = borderActive;
-    setFixedHeight(2);
-    resize(width(), 2);
+	setFixedHeight(12);
+	resize(width(), 12);
 	_dirty_cursor = true;
 	setMouseTracking(true);
 	_cur_pos_state = XFrameBar::NonePos;
@@ -216,7 +227,7 @@ void XFrameBar::mousePressEvent(QMouseEvent *event)
 void XFrameBar::mouseMoveEvent(QMouseEvent *event)
 {
 	if (_dirty_cursor && !_mouse_captured) {
-		if (event->x() >= width() - 12) {
+		if (event->x() >= width() - 8 || event->y() >= height() - 8) {
 			setCursor(QCursor(Qt::SizeFDiagCursor));
 			_cur_pos_state = XFrameBar::RightPos;
 		} else {
@@ -267,7 +278,7 @@ SysButsBar::SysButsBar(const Imagez &imagez, const QString &title, int wclass, Q
 	QFont f = QFont(font());
 	f.setBold(true);
     f.setWeight(75);
-	f.setPointSize(10);
+    f.setPointSize(24);
     setFont(f);
 
 	QHBoxLayout *layout = new QHBoxLayout;
@@ -295,7 +306,7 @@ SysButsBar::SysButsBar(const Imagez &imagez, const QString &title, int wclass, Q
 	}
 	layout->addStretch();
 	setLayout(layout);
-    int ch = CFGX("caption_height").toInt();
+	int ch = CFGX("caption_height").toInt();
     setFixedHeight(ch);
     resize(width(), ch);
 }

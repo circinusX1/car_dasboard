@@ -105,6 +105,7 @@ void CtrlHolder::_add_widget(QWidget* pw,
                              const QPoint& icx,
                              int col, int row, int align)
 {
+    Q_UNUSED(col);
     int xcx = icx.x();
     if(align==0x0001){
 
@@ -135,11 +136,17 @@ OdButton*  CtrlHolder::get_widget(const QString& pname)const
     for(;b!= _butons.end();++b)
     {
         OdButton* pb = dynamic_cast<OdButton*>(*b);
-        if(pb && pb->xset()._pname == pname)
+        if(pb)
         {
-            return pb;
+            if(pb->xset()._pname == pname)
+                return pb;
+            else if(pb->xset()._cmd == pname)
+                return pb;
+            else if(pb->xset()._name == pname)
+                return pb;
         }
     }
+
     return 0;
 }
 

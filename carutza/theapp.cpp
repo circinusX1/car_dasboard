@@ -62,6 +62,11 @@ TheApp::~TheApp()
     TheApp::PAPP=0;
 }
 
+const std::vector<Panel*>& TheApp::panels()const
+{
+    return _panels;
+}
+
 void TheApp::show_panels(bool show)
 {
     std::vector<Panel*>::iterator f =  _panels.begin();
@@ -135,7 +140,7 @@ void TheApp::init(MySett& s)
     QTimer::singleShot(1024, this, SLOT(slot_namage_apps()));
     _wm_wins_state = PS_NORMAL;
     MySett::config().finalize();
-    _runicon.load_image(CFG(_theme),"run-icon.png");
+    _runicon.load_image(CFG(_images),"run-icon.png");
     QTimer::singleShot(2048, this, SLOT(slot_refresh()));
     _ipc.start();
 }
@@ -384,19 +389,26 @@ XClient* TheApp::is_running(pid_t pid)
 //-----------------------------------------------------------------------------
 bool TheApp::_is_running(const XwnSet& xset)
 {
-    Appman* pc = _papp_man;
+    Appman*  pc  = _papp_man;
+    int      pid = is_process(xset);
     XClient* pxc = pc->is_running(xset._pname);
     if(pxc)
     {
         pc->rescan_visibilities(pxc);
-        return true;
+        if(pid)
+            return true;
     }
-
-    return is_process(xset);
+    if(pid)
+    {
+        QString s = "kill -9 " + QString::number(pid);
+        ::system((const char*)s.toUtf8());
+        ::usleep(0xFFFF);
+    }
+    return false;
 }
 
 //-----------------------------------------------------------------------------
-bool TheApp::is_process( const XwnSet& xset)
+int TheApp::is_process( const XwnSet& xset)
 {
     return is_process(xset._pname);
 
@@ -404,7 +416,7 @@ bool TheApp::is_process( const XwnSet& xset)
 
 
 //-----------------------------------------------------------------------------
-bool TheApp::is_process( const QString& pname)
+int TheApp::is_process( const QString& pname)
 {
     // find in proxcess list
     QString syscmd = "ps ax | grep " + pname +" | grep -v grep";
@@ -445,8 +457,10 @@ void TheApp::runapp(const XwnSet& xset)
 //-----------------------------------------------------------------------------
 void TheApp::slot_run_app()
 {
-    cond_if(_pset_torun==nullptr,return);
-    cond_if(_is_running(*_pset_torun), return);
+    if(_pset_torun==nullptr)
+        return;
+    if(_is_running(*_pset_torun))
+        return;
     /*
     QString binname = _pset_torun->_cmd;
     if(_pset_torun->_cmd.contains(" "))
@@ -465,11 +479,11 @@ void TheApp::slot_run_app()
     {
 */
 
-    char cd[512];
+    char cd[512]={0};
     ::getcwd(cd,511);
 
     setOverrideCursor(Qt::WaitCursor);
-    QTimer::singleShot(4096, this, SLOT(slot_normal_cursor()));
+    QTimer::singleShot(2048, this, SLOT(slot_normal_cursor()));
 
     QString cmd = "export DISPLAY=:";
     int d = CFG(_display);
@@ -483,7 +497,10 @@ void TheApp::slot_run_app()
     cmd += _pset_torun->_cmd;
     cond_if(!cmd.endsWith("&"),cmd += " &");
     qDebug() << "start: " << cmd;
-    system(cmd.toUtf8());
+
+    //QProcess::execute(cmd);
+
+    ::system((const char*)cmd.toUtf8());
     /*
     }
     else
@@ -1193,6 +1210,7 @@ void TheApp::process_key(int key)
 
 void TheApp::top_up_panels(const XClient* pcli)
 {
+    Q_UNUSED(pcli);
     //restack(pcli);
 
 }

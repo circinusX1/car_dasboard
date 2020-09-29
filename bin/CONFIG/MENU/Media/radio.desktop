@@ -1,0 +1,11 @@
+{
+Pname{gnuradio}
+Name{radio}
+Exec{gnuradio}
+Xrect{2}
+Xframe{true}
+Icon{radio}
+}
+
+
+

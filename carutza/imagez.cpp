@@ -22,7 +22,6 @@ Project:    CARUTZA
 /*-----------------------------------------------------------------------------
 -----------------------------------------------------------------------------*/
 #include <iostream>
-#include <QIcon>
 #include <QDebug>
 #include <unistd.h>
 #include <stdlib.h>
@@ -42,6 +41,10 @@ Imagez::Imagez(const char* path, const char* image)
     load_image(path, image);
 }
 
+Imagez::Imagez(const QPixmap& p):QPixmap(p)
+{
+
+}
 /*--------------------------------------------------------------------------------------
   -------------------------------------------------------------------------------------*/
 Imagez::~Imagez()
@@ -100,6 +103,7 @@ bool Imagez::load_image(const char* path,
         if(0==::access(fp.toUtf8(),0))
         {
             bool br = QPixmap::load(fp, format, flags);
+
             return br;
         }else
         {
@@ -137,3 +141,44 @@ bool Imagez::fromrgb(int rgb)
     return true;
 }
 
+void Imagez::adjust(QImage *image, int factor)
+{
+    if (image == NULL || image->isNull() || factor == 0)
+        return;
+
+    int bytes_per_pixel = image->bytesPerLine() / image->width();
+    uchar *pixel = NULL;
+    QRgb *rgba;
+
+    if (factor > 0) { // lighter
+        factor += 100;
+        for (int h = 0; h < image->height(); h++) {
+            pixel = image->scanLine(h);
+            for (int w = 0; w < image->width(); w++) {
+                rgba = (QRgb *)pixel;
+                if (qAlpha(*rgba) != 0 && (qRed(*rgba) != 0 || qGreen(*rgba) != 0 || qBlue(*rgba) != 0))
+                    *rgba = QColor::fromRgba(*rgba).lighter(factor).rgba();
+                pixel += bytes_per_pixel;
+            }
+        }
+    } else { // darker
+        factor = -factor;
+        factor += 100;
+        for (int h = 0; h < image->height(); h++) {
+            uchar *pixel = image->scanLine(h);
+            for (int w = 0; w < image->width(); w++) {
+                rgba = (QRgb *)pixel;
+                if (qAlpha(*rgba) != 0 && (qRed(*rgba) != 0 || qGreen(*rgba) != 0 || qBlue(*rgba) != 0))
+                    *rgba = QColor::fromRgba(*rgba).darker(factor).rgba();
+                pixel += bytes_per_pixel;
+            }
+        }
+    }
+}
+
+
+QPixmap Imagez::new_pixmap(const QPixmap& pixmap, QIcon::Mode m)
+{
+    QIcon icon(pixmap);
+    return icon.pixmap(pixmap.size(), m);
+}

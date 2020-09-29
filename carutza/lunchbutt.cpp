@@ -41,6 +41,7 @@ LunchButt::LunchButt(CtrlHolder *p, const QPoint& size, const XwnSet& set, QWidg
   -------------------------------------------------------------------------------------*/
 void    LunchButt::LunchButt::on_click()
 {
+    PA->_inited=true;
     emit sig_clicked(this);
     OdButton::on_click();
 }

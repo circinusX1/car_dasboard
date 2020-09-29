@@ -1,9 +1,0 @@
-{
-Pname{&wifii}
-Name{wifi}
-XRect{1}
-Exec{firefox}
-Icon{wifii.png}
-~Xframe{0}
-Isize{64,30}
-}

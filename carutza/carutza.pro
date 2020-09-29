@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 DEFINES += QT3_SUPPORT
 RESOURCES =
-
+QMAKE_CXXFLAGS += -std=c++17
 UI_HEADERS_DIR = forms
 FORMS += \
     fxabout.ui
@@ -81,6 +81,28 @@ FORMS    +=
 OTHER_FILES += \
 
 DISTFILES += \ \
+    ../bin/CONFIG/MENU/Apps/desktop.conf \
+    ../bin/CONFIG/MENU/Apps/maps.desktop \
+    ../bin/CONFIG/MENU/Apps/rssnews.desktop \
+    ../bin/CONFIG/MENU/Apps/xm.desktop \
+    ../bin/CONFIG/MENU/Car/camera.desktop \
+    ../bin/CONFIG/MENU/Car/desktop.conf \
+    ../bin/CONFIG/MENU/Car/engine.desktop \
+    ../bin/CONFIG/MENU/Car/oil.desktop \
+    ../bin/CONFIG/MENU/Car/tires.desktop \
+    ../bin/CONFIG/MENU/Car/water.desktop \
+    ../bin/CONFIG/MENU/Media/desktop.conf \
+    ../bin/CONFIG/MENU/Media/music.desktop \
+    ../bin/CONFIG/MENU/Media/radio.desktop \
+    ../bin/CONFIG/MENU/System/desktop.conf \
+    ../bin/CONFIG/MENU/System/maps.desktop \
+    ../bin/CONFIG/MENU/System/music.desktop \
+    ../bin/CONFIG/TOP/2weather.applet \
+    ../bin/CONFIG/TOP/3bt.applet \
+    ../bin/CONFIG/TOP/3wifi.applet \
+    ../bin/CONFIG/TOP/4signal.applet \
+    ../bin/CONFIG/TOP/5target.applet \
+    ../bin/CONFIG/TOP/8clock.applet \
     ../bin/DESKTOP/Apps/desktop.conf \
     ../bin/DESKTOP/Apps/pandora.desktop \
     ../bin/DESKTOP/Apps/rssnews.desktop \
