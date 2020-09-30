@@ -131,3 +131,16 @@ todo
 
 
 
+
+######## NOTES:
+
+```
+#trying
+git clone https://github.com/ElektorLabs/160520-FM-Radio-Receiver-with-RDS-for-Raspberry-Pi
+
+sudo apt-get install qtmultimedia5-dev
+ sudo apt-get install libqt5websockets5-dev
+ 
+
+```
+
