@@ -56,7 +56,8 @@ On a PC where already there is a desktop runnning
 #### For RTL radio  (qt5)
 
 ```
-sudo apt-get  install gnuradio
+work in progress bottom notes
+
 ```
 
 #### Navigaton
@@ -90,7 +91,7 @@ todo
 #### Bluetooth
 
 
-  * WIP
+todo
 
 #### Camera's
 
@@ -107,11 +108,11 @@ todo
 
 #### For temperature / Humidity
 
-   * builtin
+   *todo
 
 ### For acceleration, orientation compass
 
-  * builtin
+  todo
 
 
 ![](https://raw.githubusercontent.com/circinusX1/car_dasboard/master/docs/car1.png)
@@ -126,4 +127,21 @@ todo
 ![](https://raw.githubusercontent.com/circinusX1/car_dasboard/master/docs/car_d.png)
 
 
+
+
+######## NOTES:
+
+```
+#trying
+git clone https://github.com/ElektorLabs/160520-FM-Radio-Receiver-with-RDS-for-Raspberry-Pi
+
+sudo apt-get install qtmultimedia5-dev
+sudo apt-get install libqt5websockets5-dev
+
+
+export QT_SELECT=qt5
+qtchooser -print-env
+
+
+```
 
