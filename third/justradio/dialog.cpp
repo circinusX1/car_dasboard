@@ -36,7 +36,7 @@ void Dialog::run()
     _thr->tstart(this);
     sleep(1);
     _thr->change((const char*)ui->comboBox->currentText().toUtf8());
-    //on_pushButton_clicked();
+
 }
 
 
@@ -139,13 +139,9 @@ void Dialog::on_comboBox_2_currentIndexChanged(const QString &arg1)
     }
 }
 
+
 void Dialog::on_pushButton_clicked()
 {
-    QString arg1 = ui->comboBox_2->currentText();
-    QStringList ql = arg1.split(" ");
-
-    ui->listWidget->clear();
-
     int* posts = scan_freq(76000,110000);
     int* pi = posts;
     while(*pi++)
@@ -156,7 +152,8 @@ void Dialog::on_pushButton_clicked()
             ui->listWidget->addItem(QString::number(fk));
         }
     }
-    ui->comboBox_2->removeItem(ui->comboBox_2->currentIndex());
+
+
 }
 
 void Dialog::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
@@ -171,4 +168,9 @@ void Dialog::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
     ui->lineEdit->setText(d);
 
     _thr->change((const char*)ui->lineEdit->text().toUtf8());
+}
+
+void Dialog::on_listWidget_itemChanged(QListWidgetItem *item)
+{
+    on_listWidget_itemDoubleClicked(item);
 }
