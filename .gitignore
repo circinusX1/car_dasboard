@@ -3,6 +3,7 @@ build*
 *.pro.user
 *.lib
 *.a
+*.o
 *.m
 *.so
 
