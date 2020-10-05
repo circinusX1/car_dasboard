@@ -88,7 +88,7 @@ static int atan_lut_size = 131072; /* 512 KB */
 static int atan_lut_coef = 8;
 static int freq_changed = 1;
 static int cur_freq = 0;
-static int get_squettch=0;
+static int _get_tune=0;
 
 struct dongle_state
 {
@@ -186,57 +186,6 @@ struct dongle_state dongle;
 struct demod_state demod;
 struct output_state output;
 struct controller_state controller;
-
-void usage(void)
-{
-	fprintf(stderr,
-			"rtl_fm, a simple narrow band FM demodulator for RTL2832 based DVB-T receivers\n\n"
-			"Use:\trtl_fm -f freq [-options] [filename]\n"
-			"\t-f frequency_to_tune_to [Hz]\n"
-			"\t    use multiple -f for scanning (requires squelch)\n"
-			"\t    ranges supported, -f 118M:137M:25k\n"
-			"\t[-M modulation (default: fm)]\n"
-			"\t    fm, wbfm, raw, am, usb, lsb\n"
-			"\t    wbfm == -M fm -s 170k -o 4 -A fast -r 32k -l 0 -E deemp\n"
-			"\t    raw mode outputs 2x16 bit IQ pairs\n"
-			"\t[-s sample_rate (default: 24k)]\n"
-			"\t[-d device_index (default: 0)]\n"
-			"\t[-T enable bias-T on GPIO PIN 0 (works for rtl-sdr.com v3 dongles)]\n"
-			"\t[-g tuner_gain (default: automatic)]\n"
-			"\t[-l squelch_level (default: 0/off)]\n"
-			//"\t    for fm squelch is inverted\n"
-			//"\t[-o oversampling (default: 1, 4 recommended)]\n"
-			"\t[-p ppm_error (default: 0)]\n"
-			"\t[-E enable_option (default: none)]\n"
-			"\t    use multiple -E to enable multiple options\n"
-			"\t    edge:   enable lower edge tuning\n"
-			"\t    dc:     enable dc blocking filter\n"
-			"\t    deemp:  enable de-emphasis filter\n"
-			"\t    direct: enable direct sampling\n"
-			"\t    offset: enable offset tuning\n"
-			"\tfilename ('-' means stdout)\n"
-			"\t    omitting the filename also uses stdout\n\n"
-			"Experimental options:\n"
-			"\t[-r resample_rate (default: none / same as -s)]\n"
-			"\t[-t squelch_delay (default: 10)]\n"
-			"\t    +values will mute/scan, -values will exit\n"
-			"\t[-F fir_size (default: off)]\n"
-			"\t    enables low-leakage downsample filter\n"
-			"\t    size can be 0 or 9.  0 has bad roll off\n"
-			"\t[-A std/fast/lut choose atan math (default: std)]\n"
-			//"\t[-C clip_path (default: off)\n"
-			//"\t (create time stamped raw clips, requires squelch)\n"
-			//"\t (path must have '\%s' and will expand to date_time_freq)\n"
-			//"\t[-H hop_fifo (default: off)\n"
-			//"\t (fifo will contain the active frequency)\n"
-			"\n"
-			"Produces signed 16 bit ints, use Sox or aplay to hear them.\n"
-			"\trtl_fm ... | play -t raw -r 24k -es -b 16 -c 1 -V1 -\n"
-			"\t           | aplay -r 24k -f S16_LE -t raw -c 1\n"
-			"\t  -M wbfm  | play -r 32k ... \n"
-			"\t  -s 22050 | multimon -t raw /dev/stdin\n\n");
-	exit(1);
-}
 
 #ifdef _WIN32
 BOOL WINAPI
@@ -740,34 +689,15 @@ void arbitrary_resample(int16_t *buf1, int16_t *buf2, int len1, int len2)
 	}
 }
 
-static int nposts=0;
-static int posts[32]={0};
-static int nfreq = 0;
-static int freq[8] = {0};
-
+static int _gain;
 void autotune(int sq)
 {
-	if(get_squettch)
+	if(_get_tune && _get_tune)
 	{
-		get_squettch=0;
-		if(sq==0)
-		{
-			freq[nfreq++] = cur_freq;
-			if(nfreq>2 && nposts<32)
-			{
-				posts[nposts++]=freq[nfreq-1];
-				nfreq=0;
-
-			}
-		}
-		else
-		{
-			nfreq=0;
-		}
+		_gain = sq;
+		_get_tune = 0;
 	}
 }
-
-
 
 void full_demod(struct demod_state *d)
 {
@@ -792,7 +722,7 @@ void full_demod(struct demod_state *d)
 		low_pass(d);
 	}
 	/* power squelch */
-	d->squelch_level=100;
+	d->squelch_level=200;
 	if (d->squelch_level) {
 		sr = rms(d->lowpassed, d->lp_len, 1);
 		if (sr < d->squelch_level) {
@@ -1370,13 +1300,13 @@ void break_palyer()
 
 void set_freq(int freq)
 {
-	if(freq!=90000000 && cur_freq!=freq)
+	if(cur_freq!=freq)
 	{
 		cur_freq = freq;
 		freq_changed = 1;
 		controller.freqs[0] = freq;
 		safe_cond_signal(&controller.hop, &controller.hop_m);
-		get_squettch=1;
+		_get_tune = 1;
 	}
 }
 
@@ -1419,13 +1349,15 @@ void set_mod(const char* modulation)
 
 }
 
-int* scan_freq(int freq, int fe)
+int scan_freq(int freq)
 {
-	for(int i=freq*1000;i<fe*1000;i+=100000)
+	_get_tune = 1;
+	set_freq(freq);
+	::usleep(65535);
+	while( _get_tune &&  _get_tune)
 	{
-		set_freq(i);
 		::usleep(0xFFFF);
 	}
-	return posts;
+	return _gain;
 }
 

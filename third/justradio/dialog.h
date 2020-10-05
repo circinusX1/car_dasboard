@@ -1,6 +1,8 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
+#include <QTimer>
+#include <vector>
 #include <QDialog>
 #include <QListWidgetItem>
 #include "playthread.h"
@@ -17,10 +19,9 @@ public:
     explicit Dialog(QWidget *parent = nullptr);
     ~Dialog();
     void run();
+    void apply_freq(int fr);
 private slots:
 
-
-     void on_pushButton_9_clicked();
 
     void on_horizontalSlider_sliderMoved(int position);
 
@@ -28,28 +29,30 @@ private slots:
 
     void on_horizontalSlider_valueChanged(int value);
 
-    void on_lineEdit_returnPressed();
-
-    void on_radioButton_clicked(bool checked);
-
-    void on_radioButton_2_clicked(bool checked);
-
     void on_comboBox_currentIndexChanged(const QString &arg1);
-
-    void on_comboBox_2_currentIndexChanged(const QString &arg1);
 
     void on_pushButton_clicked();
 
-    void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
+    void timerEvent(QTimerEvent *event);
+    void on_verticalSlider_sliderMoved(int position);
 
-    void on_listWidget_itemChanged(QListWidgetItem *item);
+    void on_enter_returnPressed();
+
+    void on_enter_editingFinished();
 
 private:
-    void _applyfreq(int fr);
+
 private:
-    Ui::Dialog *ui;
+    QBasicTimer _timer;
+    Ui::Dialog  *ui;
     PlayThread* _thr;
-    int _value=0;
+    int         _value  =0;
+    int         _startf;
+    int         _endf;
+    int         _stepf;
+    std::vector<int> _gains;
 };
+
+extern Dialog* PDLG;
 
 #endif // DIALOG_H

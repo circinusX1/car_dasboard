@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,6 +13,11 @@ TEMPLATE = app
 
 INCLUDEPATH += ../libsdr
 INCLUDEPATH += libusb-1.0
+
+DEFINES += _CFG_GNU_LINUX
+DEFINES +=  GL_GLEXT_PROTOTYPES
+
+QMAKE_CXXFLAGS_WARN_ON = -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-parameter -Wno-ignore-qualifiers
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -28,7 +33,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        camera.cpp \
         convenience.cpp \
+        frustum.cpp \
+        glqgl.cpp \
         laout.cpp \
         main.cpp \
         dialog.cpp \
@@ -36,9 +44,15 @@ SOURCES += \
         sdrmain.cpp
 
 HEADERS += \
+        baselib.h \
+        baseutils.h \
+        camera.h \
         convenience.h \
         dialog.h \
+        frustum.h \
+        glqgl.h \
         laout.h \
+        os.h \
         playthread.h \
         sdrmain.h
 
@@ -52,5 +66,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 LIBS +=  -lusb-1.0
-LIBS+=-lportaudio -lrtlsdr
+LIBS +=  -lrtlsdr
+LIBS += -lglut -lGLU -lGL
 LIBS +=  -lasound -lao
+
+DISTFILES +=
