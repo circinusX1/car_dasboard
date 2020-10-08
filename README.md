@@ -145,3 +145,16 @@ qtchooser -print-env
 
 ```
 
+
+
+### P.S.
+   * Contact me on the git email or at: https://www.meeiot.org/?p=contact.php   or https://mylinuz.com/?p=_contact.php
+     * Custom private Server for remote shell.
+     * Professional Embedded Linux support.
+     * C /C ++ Coding
+     * Amazon, Google, Azure server configuration (Linux, Web Servers, Databases).
+     * Backup sollution servers on site for small companies up to 30 computers (GTA Only).
+     * Antivirus installation (GTA Only)
+                                                     @ CoMarius 1994-2020
+
+
